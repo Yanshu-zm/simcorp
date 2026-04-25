@@ -75,6 +75,7 @@ class GameEngine {
       startWithMediumEmployee: false,
       bossActionsThisMonth: 0,
       interactionsThisMonth: {},
+      recruitsThisMonth: 0,
       newsLog: [],
     };
 
