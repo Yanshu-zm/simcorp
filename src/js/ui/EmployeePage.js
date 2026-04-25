@@ -119,19 +119,19 @@ function renderEmployeeCard(emp) {
 
       <div class="employee-card__stats">
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">STRESS</div>
+          <div class="employee-card__stat-label">STRESS <span class="stat-value">${Math.round(emp.stress)}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--${stressColor}" style="width:${stressPct}%"></div></div>
         </div>
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">ABILITY</div>
+          <div class="employee-card__stat-label">ABILITY <span class="stat-value">${emp.ability}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--gradient" style="width:${abilityPct}%"></div></div>
         </div>
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">MOOD</div>
+          <div class="employee-card__stat-label">MOOD <span class="stat-value">${Math.round(emp.mood)}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--${moodColor}" style="width:${moodPct}%"></div></div>
         </div>
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">SALARY</div>
+          <div class="employee-card__stat-label">SALARY <span class="stat-value">${formatMoney(emp.salary)}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--warning" style="width:${salaryPct}%"></div></div>
         </div>
       </div>
@@ -147,6 +147,7 @@ function renderEmployeeCard(emp) {
         <button class="btn btn--danger btn--sm" data-fire="${emp.id}">FIRE</button>
         <button class="btn btn--outline btn--sm ${emp.canPromote ? '' : 'btn--disabled'}" data-promote="${emp.id}">PROMOTE</button>
         <button class="btn btn--outline btn--sm" data-interact="${emp.id}">INTERACT</button>
+        ${!emp.assignedProjectId ? `<button class="btn btn--primary btn--sm" data-assign-emp="${emp.id}">ASSIGN</button>` : ''}
         <button class="btn btn--outline btn--sm" data-chat="${emp.id}" style="color:var(--color-primary);">💬 Chat</button>
       </div>
     </div>
@@ -286,6 +287,14 @@ export function bindEmployeePageEvents() {
     btn.addEventListener('click', () => {
       const empId = btn.dataset.interact;
       showInteractModal(empId);
+    });
+  });
+
+  // Assign buttons
+  document.querySelectorAll('[data-assign-emp]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const empId = btn.dataset.assignEmp;
+      showAssignModal(empId);
     });
   });
 
@@ -444,6 +453,73 @@ function showInteractModal(empId) {
         eventBus.emit('toast', { type: 'warning', message: result.reason });
       }
     });
+  });
+}
+
+function showAssignModal(empId) {
+  const emp = gameEngine.employeeManager.getEmployee(empId);
+  if (!emp) return;
+
+  const projects = gameEngine.projectManager.activeProjects;
+  if (projects.length === 0) {
+    eventBus.emit('toast', { type: 'warning', message: '当前没有进行中的项目可供分配' });
+    return;
+  }
+
+  showModal({
+    title: `分配项目: ${emp.firstName} ${emp.lastName}`,
+    content: `
+      <div style="padding:var(--space-md);">
+        <p style="margin-bottom:var(--space-md);color:var(--color-text-secondary);">请选择要分配的项目：</p>
+        <div class="assign-project-list" style="display:flex;flex-direction:column;gap:var(--space-sm);">
+          ${projects.map(p => {
+            const isMatch = emp.functions.includes(p.category);
+            return `
+              <div class="assign-project-item ${isMatch ? 'assign-project-item--match' : ''}" 
+                   style="border:1px solid var(--color-border);padding:var(--space-md);border-radius:var(--radius-md);cursor:pointer;transition:all 0.2s;"
+                   data-assign-project-id="${p.id}">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div style="font-weight:600;">${p.name}</div>
+                    <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">${p.rarity} | ${p.category}</div>
+                  </div>
+                  ${isMatch ? '<span class="tag tag--success">专业对口</span>' : '<span class="tag">跨界</span>'}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `,
+    footer: `<button class="btn btn--secondary" id="modal-cancel">取消</button>`,
+  });
+
+  document.querySelectorAll('[data-assign-project-id]').forEach(item => {
+    item.addEventListener('mouseover', () => {
+      item.style.borderColor = 'var(--color-primary)';
+      item.style.backgroundColor = 'var(--color-bg-alt)';
+    });
+    item.addEventListener('mouseout', () => {
+      item.style.borderColor = 'var(--color-border)';
+      item.style.backgroundColor = 'transparent';
+    });
+    item.addEventListener('click', () => {
+      const projectId = item.dataset.assignProjectId;
+      const project = gameEngine.projectManager.getProjectById(projectId);
+      
+      gameEngine.snapshot();
+      const success = gameEngine.projectManager.assignEmployee(projectId, empId);
+      if (success) {
+        emp.assignedProjectId = projectId;
+        eventBus.emit('toast', { type: 'success', message: `已将 ${emp.firstName} 分配至 ${project.name}` });
+        eventBus.emit('ui:refresh');
+        closeModal(document.querySelector('.modal-overlay'));
+      }
+    });
+  });
+
+  document.getElementById('modal-cancel')?.addEventListener('click', () => {
+    closeModal(document.querySelector('.modal-overlay'));
   });
 }
 

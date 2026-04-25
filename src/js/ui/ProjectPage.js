@@ -85,7 +85,7 @@ export function renderProjectPage() {
                 </div>
               </div>
               <div class="active-project__team">
-                Lead: ${leadName}${othersCount > 0 ? ` + ${othersCount} Specialists` : ''}
+                Team: ${assignedEmps.length > 0 ? assignedEmps.map(e => e.firstName).join(', ') : '未分配'}
               </div>
               <div class="active-project__progress-row">
                 <div class="active-project__progress-bar">

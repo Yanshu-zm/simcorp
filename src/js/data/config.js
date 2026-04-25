@@ -183,6 +183,7 @@ export const RECRUIT = {
 export const PROMOTION_COSTS = {
   junior: 20000,
   medium: 60000,
+  senior: 150000,
 };
 
 // 互动选项

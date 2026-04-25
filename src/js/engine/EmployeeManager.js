@@ -241,12 +241,18 @@ export class EmployeeManager {
     if (!nextTitle) return false;
 
     const nextConfig = TITLES[nextTitle];
+    const prevTitle = emp.title;
     emp.title = nextTitle;
     
     // 按当前能力值提升 30%
     emp.ability = Math.round(emp.ability * 1.3);
-    // 工资按同等比例（30%）提升
-    emp.salary = Math.round(emp.salary * 1.3);
+
+    // 工资处理：Senior -> Top 薪水不变；其他职级按 30% 提升
+    if (prevTitle === 'senior' && nextTitle === 'top') {
+      // 薪水完全不变
+    } else {
+      emp.salary = Math.round(emp.salary * 1.3);
+    }
     
     emp.canPromote = false;
 
