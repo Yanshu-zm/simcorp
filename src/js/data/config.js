@@ -174,7 +174,7 @@ export const PROJECT_REFRESH_PROB = {
 
 // 招募配置
 export const RECRUIT = {
-  normal: { cost: 300, freeMonths: [3, 9], candidateCount: 8 },
+  normal: { cost: 500, freeMonths: [3, 9], candidateCount: 8 },
   elite: { cost: 5000, probs: { junior: 0, medium: 0.85, senior: 0.15 }, minLevel: 2, candidateCount: 3 },
   headhunter: { cost: 12000, probs: { junior: 0.10, medium: 0.50, senior: 0.35, top: 0.05 }, minLevel: 3, candidateCount: 3 },
 };
@@ -304,6 +304,9 @@ export const EVENT_TRIGGER_INTERVAL = 1; // 每个月均触发 (需配合 EventM
 
 // 设备拥有上限
 export const EQUIPMENT_LIMIT = 8;
+
+// 每月招募次数上限
+export const MONTHLY_RECRUIT_LIMIT = 10;
 
 // 月份名称
 export const MONTH_NAMES = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];

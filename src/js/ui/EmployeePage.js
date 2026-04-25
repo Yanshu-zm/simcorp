@@ -3,7 +3,7 @@ import gameEngine from '../engine/GameEngine.js';
 import { renderNewsFeed } from './NewsFeed.js';
 import { formatMoney } from '../utils/format.js';
 import { showModal, closeModal } from './Modal.js';
-import { TITLES, RECRUIT, INTERACTIONS, PROMOTION_COSTS } from '../data/config.js';
+import { TITLES, RECRUIT, INTERACTIONS, PROMOTION_COSTS, MONTHLY_RECRUIT_LIMIT } from '../data/config.js';
 import { isPositiveTrait } from '../data/traits.js';
 import { openChatPanel } from './ChatPanel.js';
 import eventBus from '../eventBus.js';
@@ -27,14 +27,14 @@ export function renderEmployeePage() {
       <!-- Talent Acquisition -->
       <div class="card talent-acquisition">
         <div class="talent-acquisition__header">
-          <div class="card__title" style="margin-bottom:0;">Talent Acquisition</div>
+          <div class="card__title" style="margin-bottom:0;">Talent Acquisition <span style="font-size:var(--font-size-sm);color:var(--color-text-muted);font-weight:400;">(${gameEngine.gameState.recruitsThisMonth}/${MONTHLY_RECRUIT_LIMIT} 次/月)</span></div>
           <div class="talent-acquisition__budget">Budget: ${formatMoney(company.funds)}</div>
         </div>
 
         <div class="recruit-types">
           <div class="recruit-type active" data-recruit="normal" id="recruit-normal">
             <i data-lucide="users" width="24" height="24"></i>
-            Normal ($300)
+            Normal ($500)
           </div>
           <div class="recruit-type ${canElite ? '' : 'recruit-type--locked'}" data-recruit="elite" id="recruit-elite">
             <i data-lucide="star" width="24" height="24"></i>
@@ -172,6 +172,12 @@ export function bindEmployeePageEvents() {
       const type = selectedRecruitType;
       const config = RECRUIT[type];
 
+      // Check monthly limit
+      if (gameEngine.gameState.recruitsThisMonth >= MONTHLY_RECRUIT_LIMIT) {
+        eventBus.emit('toast', { type: 'error', message: `本月招募次数已达上限 (${MONTHLY_RECRUIT_LIMIT}次)！` });
+        return;
+      }
+
       // Check cost
       if (gameEngine.companyManager.funds < config.cost) {
         eventBus.emit('toast', { type: 'error', message: `资金不足！需要 ${formatMoney(config.cost)}` });
@@ -189,8 +195,11 @@ export function bindEmployeePageEvents() {
       if (config.cost && !isFreeMonth) {
         gameEngine.snapshot();
         gameEngine.companyManager.addFunds(-config.cost);
-        eventBus.emit('ui:refresh');
       }
+
+      // Increment monthly recruit count
+      gameEngine.gameState.recruitsThisMonth++;
+      eventBus.emit('ui:refresh');
 
       const candidates = gameEngine.performRecruitment(type);
       renderCandidates(candidates);

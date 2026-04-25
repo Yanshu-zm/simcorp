@@ -38,6 +38,7 @@ class GameEngine {
       // Monthly tracking
       bossActionsThisMonth: 0,
       interactionsThisMonth: {},
+      recruitsThisMonth: 0,
       newsLog: [],
     };
     this.undoStack = [];
@@ -187,6 +188,7 @@ class GameEngine {
     this.employeeManager.resetMonthlyStates();
     this.gameState.bossActionsThisMonth = 0;
     this.gameState.interactionsThisMonth = {};
+    this.gameState.recruitsThisMonth = 0;
 
     // Refresh market projects
     this.projectManager.refreshMarket(this.companyManager.level);
