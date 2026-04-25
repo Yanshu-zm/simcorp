@@ -147,7 +147,9 @@ function renderEmployeeCard(emp) {
         <button class="btn btn--danger btn--sm" data-fire="${emp.id}">FIRE</button>
         <button class="btn btn--outline btn--sm ${emp.canPromote ? '' : 'btn--disabled'}" data-promote="${emp.id}">PROMOTE</button>
         <button class="btn btn--outline btn--sm" data-interact="${emp.id}">INTERACT</button>
-        ${!emp.assignedProjectId ? `<button class="btn btn--primary btn--sm" data-assign-emp="${emp.id}">ASSIGN</button>` : ''}
+        <button class="btn btn--primary btn--sm" data-assign-emp="${emp.id}">
+          ${emp.assignedProjectId ? 'REASSIGN' : 'ASSIGN'}
+        </button>
         <button class="btn btn--outline btn--sm" data-chat="${emp.id}" style="color:var(--color-primary);">💬 Chat</button>
       </div>
     </div>
@@ -508,6 +510,12 @@ function showAssignModal(empId) {
       const project = gameEngine.projectManager.getProjectById(projectId);
       
       gameEngine.snapshot();
+
+      // Unassign from old project if exists
+      if (emp.assignedProjectId) {
+        gameEngine.projectManager.unassignEmployee(emp.assignedProjectId, emp.id);
+      }
+
       const success = gameEngine.projectManager.assignEmployee(projectId, empId);
       if (success) {
         emp.assignedProjectId = projectId;

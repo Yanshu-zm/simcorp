@@ -369,6 +369,7 @@
 
 .employee-card__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-sm);
 }
 
