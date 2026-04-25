@@ -1,0 +1,154 @@
+/* ===== Home Page ===== */
+.home-page {
+  display: flex;
+  gap: var(--space-2xl);
+}
+
+.home-page__left {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.home-page__center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* Company System card */
+.company-system {
+  padding: var(--space-xl);
+}
+
+.company-system__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-lg);
+}
+
+.company-system__level-badge {
+  padding: var(--space-xs) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.company-system__exp {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.company-system__funds {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-lg);
+}
+
+.company-system__funds-value {
+  font-weight: 700;
+  color: var(--color-success);
+  font-size: var(--font-size-base);
+}
+
+.company-system__cost {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Boss Actions card */
+.boss-actions {
+  padding: var(--space-xl);
+}
+
+/* Company banner */
+.company-banner {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  height: 200px;
+  background: linear-gradient(135deg, #374151, #1F2937);
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-2xl);
+}
+
+.company-banner__name {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: -1px;
+}
+
+/* Overview section */
+.home-overview {
+  padding: var(--space-xl);
+}
+
+.home-overview__badge {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+}
+
+.home-overview__title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+}
+
+.home-overview__desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-2xl);
+}
+
+.home-overview__stats {
+  display: flex;
+  justify-content: space-around;
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* Feature cards row */
+.home-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+}
+
+/* Date display */
+.home-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  padding: var(--space-md) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}

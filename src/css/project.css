@@ -1,0 +1,306 @@
+/* ===== Project Page ===== */
+.project-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+/* Financial Hub */
+.financial-hub {
+  padding: var(--space-xl);
+}
+
+.financial-hub__total {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin: var(--space-sm) 0 var(--space-xl);
+}
+
+.financial-hub__item {
+  margin-bottom: var(--space-md);
+}
+
+.financial-hub__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.financial-hub__value {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+/* Project Market */
+.project-market {
+  padding: var(--space-2xl);
+}
+
+.project-market__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.project-market__refresh {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.project-market__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* Market project item */
+.market-project {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-normal);
+}
+
+.market-project:hover {
+  border-color: var(--color-primary-light);
+}
+
+.market-project__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.market-project__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.market-project__name {
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.market-project__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.market-project__reward {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  text-align: right;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.market-project__actions {
+  flex-shrink: 0;
+}
+
+/* Active Projects */
+.active-projects {
+  padding: var(--space-2xl);
+}
+
+.active-projects__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.active-projects__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.active-project {
+  padding-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.active-project:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.active-project__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-sm);
+}
+
+.active-project__name {
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+.active-project__eta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+.active-project__team {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.active-project__progress-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.active-project__progress-bar {
+  flex: 1;
+}
+
+.active-project__progress-pct {
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  min-width: 45px;
+  text-align: right;
+}
+
+.active-project__reward-info {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+}
+
+.active-project__manage-btn {
+  margin-top: var(--space-md);
+}
+
+/* Assign new project button */
+.assign-new-project {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: var(--transition-normal);
+}
+
+.assign-new-project:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+.assign-new-project__text {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-top: var(--space-sm);
+}
+
+/* Active Bonuses */
+.active-bonuses {
+  padding: var(--space-xl);
+  background: linear-gradient(135deg, #1F2937, #374151);
+  color: #fff;
+}
+
+.active-bonuses__title {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.6;
+  margin-bottom: var(--space-md);
+}
+
+.active-bonuses__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  font-size: var(--font-size-sm);
+}
+
+.active-bonuses__tag {
+  padding: 2px var(--space-sm);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+}
+
+/* Project assign modal */
+.assign-modal__employees {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.assign-modal__employee {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.assign-modal__employee:hover {
+  border-color: var(--color-primary);
+}
+
+.assign-modal__employee.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+.assign-modal__employee.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.assign-modal__employee-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+
+.assign-modal__employee.selected .assign-modal__employee-check {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
