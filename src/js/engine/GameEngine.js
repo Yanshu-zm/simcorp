@@ -281,7 +281,6 @@ class GameEngine {
     }
 
     // Apply equipment effects
-    const equipEffects = this.equipmentManager.getActiveEffects();
     settlement.equipmentEffects = equipEffects;
     this.employeeManager.applyEquipmentEffects(equipEffects);
 
