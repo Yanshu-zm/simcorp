@@ -3,6 +3,7 @@ import gameEngine from '../engine/GameEngine.js';
 import { formatMoney } from '../utils/format.js';
 import { showModal, closeModal } from './Modal.js';
 import { EQUIPMENT_TYPES } from '../data/equipment.js';
+import { EQUIPMENT_LIMIT } from '../data/config.js';
 import eventBus from '../eventBus.js';
 
 export function renderEquipmentPage() {
@@ -49,7 +50,7 @@ export function renderEquipmentPage() {
       <!-- Assets Inventory -->
       <div class="card assets-inventory">
         <div class="assets-inventory__header">
-          <div class="card__title" style="margin-bottom:0;">Assets Inventory</div>
+          <div class="card__title" style="margin-bottom:0;">Assets Inventory <span style="font-size:var(--font-size-sm);color:var(--color-text-muted);font-weight:400;">(${owned.length}/${EQUIPMENT_LIMIT})</span></div>
           <button class="btn btn--outline btn--sm">
             <i data-lucide="sliders-horizontal" width="14" height="14"></i>
           </button>
@@ -130,6 +131,11 @@ export function bindEquipmentPageEvents() {
 
       if (gameEngine.companyManager.funds < type.price) {
         eventBus.emit('toast', { type: 'error', message: `资金不足！需要 ${formatMoney(type.price)}` });
+        return;
+      }
+
+      if (gameEngine.equipmentManager.ownedEquipment.length >= EQUIPMENT_LIMIT) {
+        eventBus.emit('toast', { type: 'error', message: `设备数量已达上限 (${EQUIPMENT_LIMIT})！` });
         return;
       }
 

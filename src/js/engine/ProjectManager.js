@@ -108,7 +108,7 @@ export class ProjectManager {
     return true;
   }
 
-  advanceProjects(employeeManager, revenueMod = 0) {
+  advanceProjects(employeeManager, revenueMod = 0, equipEffects = {}) {
     const results = [];
 
     for (const project of this.activeProjects) {
@@ -119,9 +119,15 @@ export class ProjectManager {
       for (const empId of project.assignedEmployees) {
         const emp = employeeManager.getEmployee(empId);
         if (emp) {
-          totalProgress += employeeManager.calculateMonthlyProgress(emp, project.category);
+          totalProgress += employeeManager.calculateMonthlyProgress(emp, project.category, equipEffects);
         }
       }
+      
+      // Apply equipment progress boost (if any)
+      if (equipEffects.progressBoost) {
+        totalProgress *= (1 + equipEffects.progressBoost);
+      }
+
       project.currentProgress += totalProgress;
 
       // Check completion

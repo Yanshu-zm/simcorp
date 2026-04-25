@@ -302,5 +302,8 @@ export const INTERACTIONS = [
 // 随机事件触发频率
 export const EVENT_TRIGGER_INTERVAL = 1; // 每个月均触发 (需配合 EventManager.shouldTrigger)
 
+// 设备拥有上限
+export const EQUIPMENT_LIMIT = 8;
+
 // 月份名称
 export const MONTH_NAMES = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];

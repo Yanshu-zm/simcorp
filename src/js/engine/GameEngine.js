@@ -229,8 +229,9 @@ class GameEngine {
     };
 
     // 1. Project progress
+    const equipEffects = this.equipmentManager.getActiveEffects();
     const revenueMod = this.gameState.globalRevenueMod;
-    settlement.projectResults = this.projectManager.advanceProjects(this.employeeManager, revenueMod);
+    settlement.projectResults = this.projectManager.advanceProjects(this.employeeManager, revenueMod, equipEffects);
 
     // Process completed projects
     for (const result of settlement.projectResults) {
@@ -241,7 +242,7 @@ class GameEngine {
         for (const empId of result.project.assignedEmployees) {
           const emp = this.employeeManager.getEmployee(empId);
           if (emp) {
-            this.employeeManager.applyAbilityGrowth(emp, result.project.rarity, this.gameState.globalGrowthMod);
+            this.employeeManager.applyAbilityGrowth(emp, result.project.rarity, this.gameState.globalGrowthMod, equipEffects);
           }
         }
         if (result.project.rarity === 'TOP') {

@@ -184,10 +184,12 @@ export function bindEmployeePageEvents() {
         return;
       }
 
-      // Deduct cost for paid recruitment
-      if (config.cost) {
+      // Deduct cost for paid recruitment (Normal is free in March and September)
+      const isFreeMonth = type === 'normal' && (gameEngine.gameState.month === 3 || gameEngine.gameState.month === 9);
+      if (config.cost && !isFreeMonth) {
         gameEngine.snapshot();
         gameEngine.companyManager.addFunds(-config.cost);
+        eventBus.emit('ui:refresh');
       }
 
       const candidates = gameEngine.performRecruitment(type);

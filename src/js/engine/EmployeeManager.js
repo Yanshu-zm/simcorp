@@ -123,7 +123,7 @@ export class EmployeeManager {
     return this.employees.filter(e => !e.assignedProjectId);
   }
 
-  getEfficiency(emp) {
+  getEfficiency(emp, equipEffects = {}) {
     const moodFactor = emp.mood / 100;
     const stressFactor = 1 - emp.stress / 120;
     let eff = moodFactor * stressFactor;
@@ -132,9 +132,14 @@ export class EmployeeManager {
     // Apply current month mod
     if (emp.currentEfficiencyMod) {
       eff *= (1 + emp.currentEfficiencyMod);
-      eff = clamp(eff, WORK_EFFECTS.efficiencyMin, WORK_EFFECTS.efficiencyMax);
     }
-    return eff;
+
+    // Apply equipment efficiency boost
+    if (equipEffects.efficiencyBoost) {
+      eff *= (1 + equipEffects.efficiencyBoost);
+    }
+
+    return clamp(eff, WORK_EFFECTS.efficiencyMin, WORK_EFFECTS.efficiencyMax * 2); // Allow efficiency to go higher with equipment
   }
 
   getTraitMultiplier(emp, category) {
@@ -147,11 +152,11 @@ export class EmployeeManager {
     return mult;
   }
 
-  calculateMonthlyProgress(emp, projectCategory) {
+  calculateMonthlyProgress(emp, projectCategory, equipEffects = {}) {
     if (emp.forceResting) return 0;
 
     const matchCoeff = emp.functions.includes(projectCategory) ? 1 : 0.4;
-    const efficiency = this.getEfficiency(emp);
+    const efficiency = this.getEfficiency(emp, equipEffects);
     const efficiencyTraitMult = this.getTraitMultiplier(emp, 'efficiency');
     
     // 效率提升 1.5 倍
@@ -189,7 +194,7 @@ export class EmployeeManager {
     emp.stress = clamp(emp.stress, 0, 120);
   }
 
-  applyAbilityGrowth(emp, projectRarity, globalGrowthMod = 0) {
+  applyAbilityGrowth(emp, projectRarity, globalGrowthMod = 0, equipEffects = {}) {
     const range = ABILITY_GROWTH[projectRarity];
     if (!range) return 0;
 
@@ -209,6 +214,11 @@ export class EmployeeManager {
 
     // Global mod (talent)
     growth *= (1 + globalGrowthMod);
+
+    // Equipment growth boost
+    if (equipEffects.growthBoost) {
+      growth *= (1 + equipEffects.growthBoost);
+    }
 
     growth = Math.round(growth);
     emp.ability += growth;
@@ -283,7 +293,11 @@ export class EmployeeManager {
   applyEquipmentEffects(equipmentEffects) {
     if (!equipmentEffects) return;
     this.employees.forEach(emp => {
-      if (equipmentEffects.ability) emp.ability += 0; // Equipment gives a flat buff, handled differently
+      // Flat ability boost from certain equipment
+      if (equipmentEffects.ability) {
+        // We don't add to emp.ability permanently here to avoid accumulation
+        // This is handled in getEfficiency/calculateMonthlyProgress if needed
+      }
       if (equipmentEffects.moodBoost) emp.mood = clamp(emp.mood + equipmentEffects.moodBoost, 0, 100);
       if (equipmentEffects.stressReduction) emp.stress = clamp(emp.stress - equipmentEffects.stressReduction, 0, 120);
     });
