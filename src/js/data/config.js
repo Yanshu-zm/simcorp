@@ -94,10 +94,10 @@ export const WORK_EFFECTS = {
   baseMoodLoss: 6,
   extraMoodLossPerMonth: 2,
   maxMoodLoss: 16,
-  baseStressGain: 8,
-  extraStressGainPerMonth: 3,
-  maxStressGain: 23,
-  progressMultiplier: 0.12,
+  baseStressGain: 10,
+  extraStressGainPerMonth: 4,
+  maxStressGain: 30,
+  progressMultiplier: 0.1,
   efficiencyMin: 0.3,
   efficiencyMax: 1.0,
   resignMoodThreshold: 10,
@@ -304,7 +304,7 @@ export const INTERACTIONS = [
 export const EVENT_TRIGGER_INTERVAL = 1; // 每个月均触发 (需配合 EventManager.shouldTrigger)
 
 // 设备拥有上限
-export const EQUIPMENT_LIMIT = 8;
+export const EQUIPMENT_LIMIT = 6;
 
 // 每月招募次数上限
 export const MONTHLY_RECRUIT_LIMIT = 10;

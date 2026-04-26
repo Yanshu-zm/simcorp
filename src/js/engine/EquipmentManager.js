@@ -43,6 +43,16 @@ export class EquipmentManager {
     return cost;
   }
 
+  sellEquipment(itemId) {
+    const index = this.ownedEquipment.findIndex(e => e.id === itemId);
+    if (index === -1) return 0;
+    const item = this.ownedEquipment[index];
+    const sellPrice = Math.round((item.currentDurability / item.maxDurability) * item.price);
+    this.ownedEquipment.splice(index, 1);
+    eventBus.emit('equipment:sold', { item, sellPrice });
+    return sellPrice;
+  }
+
   applyMonthlyDurability() {
     const broken = [];
     for (const item of this.ownedEquipment) {

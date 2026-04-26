@@ -101,15 +101,20 @@ export function renderEquipmentPage() {
                 </td>
                 <td style="font-size:var(--font-size-sm);">${formatMoney(item.maintenanceCost)}/月</td>
                 <td>
-                  ${item.currentDurability <= 0 ? `
-                    <button class="btn btn--outline btn--sm" data-repair="${item.id}">
-                      <i data-lucide="wrench" width="12" height="12"></i> 维修 ${formatMoney(Math.round(item.price * 0.5))}
+                  <div style="display:flex;gap:var(--space-xs);">
+                    ${item.currentDurability <= 0 ? `
+                      <button class="btn btn--outline btn--sm" data-repair="${item.id}">
+                        <i data-lucide="wrench" width="12" height="12"></i> 维修
+                      </button>
+                    ` : `
+                      <button class="btn btn--outline btn--sm btn--disabled" disabled>
+                        <i data-lucide="check-circle" width="12" height="12"></i> 正常
+                      </button>
+                    `}
+                    <button class="btn btn--danger btn--sm" data-sell="${item.id}" title="出售价格: ${formatMoney(Math.round((item.currentDurability / item.maxDurability) * item.price))}">
+                      <i data-lucide="dollar-sign" width="12" height="12"></i> 出售
                     </button>
-                  ` : `
-                    <button class="btn btn--outline btn--sm btn--disabled" disabled>
-                      <i data-lucide="check-circle" width="12" height="12"></i> 正常
-                    </button>
-                  `}
+                  </div>
                 </td>
               </tr>`;
             }).join('')}
@@ -192,6 +197,47 @@ export function bindEquipmentPageEvents() {
       gameEngine.equipmentManager.repairEquipment(itemId);
       eventBus.emit('toast', { type: 'success', message: `${item.name} 已维修！` });
       eventBus.emit('ui:refresh');
+    });
+  });
+  // Sell equipment
+  document.querySelectorAll('[data-sell]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.sell;
+      const item = gameEngine.equipmentManager.ownedEquipment.find(e => e.id === itemId);
+      if (!item) return;
+
+      const sellPrice = Math.round((item.currentDurability / item.maxDurability) * item.price);
+
+      showModal({
+        title: '出售设备',
+        content: `
+          <div style="text-align:center;padding:var(--space-xl);">
+            <div style="font-size:3rem;margin-bottom:var(--space-lg);">${item.icon}</div>
+            <p>确定要出售 <strong>${item.name}</strong> 吗？</p>
+            <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm);margin-top:var(--space-sm);">
+              当前耐久: ${Math.round((item.currentDurability/item.maxDurability)*100)}%
+            </p>
+            <div style="margin-top:var(--space-xl);">
+              预计回收金额: <strong style="font-size:var(--font-size-xl);color:var(--color-success);">${formatMoney(sellPrice)}</strong>
+            </div>
+          </div>
+        `,
+        footer: `<button class="btn btn--secondary" id="modal-cancel">取消</button>
+                 <button class="btn btn--danger" id="modal-confirm-sell">确认出售</button>`,
+      });
+
+      document.getElementById('modal-confirm-sell')?.addEventListener('click', () => {
+        gameEngine.snapshot();
+        const finalPrice = gameEngine.equipmentManager.sellEquipment(itemId);
+        gameEngine.companyManager.addFunds(finalPrice);
+        closeModal(document.querySelector('.modal-overlay'));
+        eventBus.emit('toast', { type: 'success', message: `已售出 ${item.name}，回收 ${formatMoney(finalPrice)}` });
+        eventBus.emit('ui:refresh');
+      });
+
+      document.getElementById('modal-cancel')?.addEventListener('click', () => {
+        closeModal(document.querySelector('.modal-overlay'));
+      });
     });
   });
 }
