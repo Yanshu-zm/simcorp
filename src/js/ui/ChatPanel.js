@@ -3,6 +3,7 @@ import chatManager from '../ai/ChatManager.js';
 import aiService from '../ai/AIService.js';
 import gameEngine from '../engine/GameEngine.js';
 import eventBus from '../eventBus.js';
+import { t } from '../utils/i18n.js';
 
 let currentEmpId = null;
 let isStreaming = false;
@@ -30,12 +31,13 @@ export function openChatPanel(empId) {
         <div class="chat-panel__info">
           <div class="chat-panel__name">💬 ${emp.firstName} ${emp.lastName}</div>
           <div class="chat-panel__meta">
-            <span>${emp.title === 'senior' ? 'Senior' : emp.title === 'medium' ? 'Medium' : 'Junior'}</span>
+            <span>${t(`chat.title.${emp.title}`) || emp.title}</span>
             <span>·</span>
             <span>${emp.functions.join('/')}</span>
             <span>·</span>
-            <span>心情:${Math.round(emp.mood)}</span>
-            <span>压力:${Math.round(emp.stress)}</span>
+            <span>${t('emp.stats.mood')}:${Math.round(emp.mood)}</span>
+            <span>·</span>
+            <span>${t('emp.stats.stress')}:${Math.round(emp.stress)}</span>
           </div>
         </div>
         <div class="chat-panel__close" id="chat-close">
@@ -45,8 +47,8 @@ export function openChatPanel(empId) {
 
       ${!configured ? `
         <div class="chat-panel__banner">
-          ⚠️ 未配置 AI API，使用模板回复 ·
-          <a id="chat-open-settings">去设置</a>
+          ${t('chat.banner')} ·
+          <a id="chat-open-settings" style="cursor:pointer; text-decoration:underline;">${t('chat.goToSettings')}</a>
         </div>
       ` : ''}
 
@@ -57,7 +59,7 @@ export function openChatPanel(empId) {
 
       <div class="chat-panel__input-area">
         <input type="text" class="chat-panel__input" id="chat-input"
-               placeholder="输入消息..." autocomplete="off" />
+               placeholder="${t('chat.inputPlaceholder')}" autocomplete="off" />
         <div class="chat-panel__send" id="chat-send">
           <i data-lucide="send" width="16" height="16"></i>
         </div>
@@ -66,10 +68,10 @@ export function openChatPanel(empId) {
       <div class="chat-panel__footer">
         <div class="chat-panel__footer-actions">
           <div class="chat-panel__footer-btn" id="chat-settings-btn">
-            <i data-lucide="settings" width="12" height="12"></i> AI设置
+            <i data-lucide="settings" width="12" height="12"></i> ${t('tooltip.settings')}
           </div>
           <div class="chat-panel__footer-btn" id="chat-clear-btn">
-            <i data-lucide="trash-2" width="12" height="12"></i> 清空
+            <i data-lucide="trash-2" width="12" height="12"></i> ${t('chat.clearBtn')}
           </div>
         </div>
         <div class="chat-panel__token-count" id="chat-token-count">
@@ -95,12 +97,7 @@ export function openChatPanel(empId) {
 }
 
 function renderWelcome(emp) {
-  const greetings = {
-    high: '老板好！有什么事吗？😊',
-    mid: '老板好。',
-    low: '...嗯？',
-  };
-  const greeting = emp.mood >= 70 ? greetings.high : emp.mood >= 40 ? greetings.mid : greetings.low;
+  const greeting = emp.mood >= 70 ? t('chat.welcome.high') : emp.mood >= 40 ? t('chat.welcome.mid') : t('chat.welcome.low');
   return `
     <div class="chat-msg chat-msg--ai">
       <div class="chat-msg__bubble">${greeting}</div>
@@ -132,7 +129,7 @@ function appendMessage(role, text, effects = []) {
   if (effects.length > 0) {
     effectsHtml = '<div class="chat-msg__effects">' +
       effects.map(e => {
-        const label = e.attr === 'mood' ? '心情' : '压力';
+        const label = e.attr === 'mood' ? t('emp.stats.mood') : t('emp.stats.stress');
         const sign = e.value > 0 ? '+' : '';
         const cls = (e.attr === 'mood' && e.value > 0) || (e.attr === 'stress' && e.value < 0)
           ? 'chat-msg__effect-tag--positive'
@@ -186,7 +183,7 @@ function finalizeStreamingBubble(cleanText, effects) {
     if (effects.length > 0) {
       const parent = bubble.parentElement;
       const effectsHtml = effects.map(e => {
-        const label = e.attr === 'mood' ? '心情' : '压力';
+        const label = e.attr === 'mood' ? t('emp.stats.mood') : t('emp.stats.stress');
         const sign = e.value > 0 ? '+' : '';
         const cls = (e.attr === 'mood' && e.value > 0) || (e.attr === 'stress' && e.value < 0)
           ? 'chat-msg__effect-tag--positive'
@@ -242,7 +239,7 @@ async function handleSend(empId) {
       if (result.effects.length > 0) eventBus.emit('ui:refresh');
     } catch {
       removeTypingIndicator();
-      appendMessage('ai', '（请求失败，请检查 AI 设置）');
+      appendMessage('ai', t('chat.requestFailed'));
     }
   } else {
     // Template mode
@@ -266,12 +263,13 @@ function refreshChatHeader(empId) {
   const metaEl = document.querySelector('.chat-panel__meta');
   if (metaEl) {
     metaEl.innerHTML = `
-      <span>${emp.title === 'senior' ? 'Senior' : emp.title === 'medium' ? 'Medium' : 'Junior'}</span>
+      <span>${t(`chat.title.${emp.title}`) || emp.title}</span>
       <span>·</span>
       <span>${emp.functions.join('/')}</span>
       <span>·</span>
-      <span>心情:${Math.round(emp.mood)}</span>
-      <span>压力:${Math.round(emp.stress)}</span>
+      <span>${t('emp.stats.mood')}:${Math.round(emp.mood)}</span>
+      <span>·</span>
+      <span>${t('emp.stats.stress')}:${Math.round(emp.stress)}</span>
     `;
   }
 }
@@ -300,7 +298,7 @@ function bindChatEvents(overlay, empId) {
       const emp = gameEngine.employeeManager.getEmployee(empId);
       container.innerHTML = emp ? renderWelcome(emp) : '';
     }
-    eventBus.emit('toast', { type: 'info', message: '对话记录已清空' });
+    eventBus.emit('toast', { type: 'info', message: t('chat.historyCleared') });
   });
 
   // Settings

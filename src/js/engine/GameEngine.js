@@ -40,6 +40,7 @@ class GameEngine {
       interactionsThisMonth: {},
       recruitsThisMonth: 0,
       newsLog: [],
+      language: localStorage.getItem('game-lang') || 'zh',
     };
     this.undoStack = [];
   }

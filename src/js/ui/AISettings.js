@@ -1,8 +1,8 @@
-// ===== AI Settings Modal =====
 import { PROVIDERS, loadAIConfig, saveAIConfig, clearAIConfig, getProviderConfig } from '../ai/aiConfig.js';
 import aiService from '../ai/AIService.js';
 import { showModal, closeModal } from './Modal.js';
 import eventBus from '../eventBus.js';
+import { t } from '../utils/i18n.js';
 
 export function openAISettings() {
   const cfg = loadAIConfig();
@@ -18,10 +18,10 @@ export function openAISettings() {
     </div>
 
     <div class="ai-settings__field">
-      <label class="ai-settings__label">API Key</label>
+      <label class="ai-settings__label">${t('ai.settings.apiKey')}</label>
       <div class="ai-settings__key-row">
         <input type="password" class="ai-settings__input" id="ai-key-input"
-               value="${cfg.apiKey || ''}" placeholder="输入你的 API Key" />
+               value="${cfg.apiKey || ''}" placeholder="${t('ai.settings.keyPlaceholder')}" />
         <div class="ai-settings__key-toggle" id="ai-key-toggle">
           <i data-lucide="eye" width="16" height="16"></i>
         </div>
@@ -29,7 +29,7 @@ export function openAISettings() {
     </div>
 
     <div class="ai-settings__field">
-      <label class="ai-settings__label">模型</label>
+      <label class="ai-settings__label">${t('ai.settings.model')}</label>
       <select class="ai-settings__select" id="ai-model-select">
         ${getProviderConfig(cfg.provider).models.map(m =>
           `<option value="${m}" ${cfg.model === m ? 'selected' : ''}>${m}</option>`
@@ -38,7 +38,7 @@ export function openAISettings() {
     </div>
 
     <div class="ai-settings__field">
-      <label class="ai-settings__label">回复语言</label>
+      <label class="ai-settings__label">${t('ai.settings.lang')}</label>
       <select class="ai-settings__select" id="ai-lang-select">
         <option value="zh" ${cfg.language === 'zh' ? 'selected' : ''}>中文</option>
         <option value="en" ${cfg.language === 'en' ? 'selected' : ''}>English</option>
@@ -47,10 +47,10 @@ export function openAISettings() {
 
     <div style="display:flex;gap:var(--space-md);">
       <button class="btn btn--outline btn--full" id="ai-test-btn">
-        <i data-lucide="wifi" width="14" height="14"></i> 测试连接
+        <i data-lucide="wifi" width="14" height="14"></i> ${t('ai.settings.test')}
       </button>
       <button class="btn btn--outline" id="ai-clear-btn" style="color:var(--color-danger);">
-        清除
+        ${t('ai.settings.clear')}
       </button>
     </div>
 
@@ -58,16 +58,16 @@ export function openAISettings() {
 
     <div class="ai-settings__hint">
       <i data-lucide="shield" width="14" height="14" style="flex-shrink:0;margin-top:1px;"></i>
-      <div>API Key 仅保存在浏览器本地 (localStorage)，不会上传到任何服务器。对话内容直接从浏览器发送到 API 提供商。</div>
+      <div>${t('ai.settings.hint')}</div>
     </div>
   `;
 
   const modal = showModal({
-    title: '⚙️ AI 对话设置',
+    title: t('ai.settings.title'),
     content,
     footer: `
-      <button class="btn btn--secondary" id="ai-cancel">取消</button>
-      <button class="btn btn--primary" id="ai-save">保存设置</button>
+      <button class="btn btn--secondary" id="ai-cancel">${t('btn.close')}</button>
+      <button class="btn btn--primary" id="ai-save">${t('btn.save')}</button>
     `,
   });
 
@@ -99,7 +99,7 @@ export function openAISettings() {
   modal.querySelector('#ai-test-btn')?.addEventListener('click', async () => {
     const resultEl = modal.querySelector('#ai-test-result');
     if (!resultEl) return;
-    resultEl.innerHTML = '<div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-md);">测试中...</div>';
+    resultEl.innerHTML = `<div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-md);">${t('ai.settings.testing')}</div>`;
 
     // Temporarily save config for test
     const tempCfg = collectFormConfig(modal);
@@ -107,9 +107,9 @@ export function openAISettings() {
 
     const result = await aiService.testConnection();
     if (result.success) {
-      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--success">✅ 连接成功！模型响应正常。</div>`;
+      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--success">${t('ai.settings.testSuccess')}</div>`;
     } else {
-      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--error">❌ 连接失败: ${result.error}</div>`;
+      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--error">${t('ai.settings.testFail').replace('{error}', result.error)}</div>`;
     }
   });
 
@@ -117,7 +117,7 @@ export function openAISettings() {
   modal.querySelector('#ai-clear-btn')?.addEventListener('click', () => {
     clearAIConfig();
     closeModal(modal);
-    eventBus.emit('toast', { type: 'info', message: 'AI 设置已清除' });
+    eventBus.emit('toast', { type: 'info', message: t('msg.aiConfigCleared') });
   });
 
   // Cancel
@@ -128,7 +128,7 @@ export function openAISettings() {
     const newCfg = collectFormConfig(modal);
     saveAIConfig(newCfg);
     closeModal(modal);
-    eventBus.emit('toast', { type: 'success', message: 'AI 设置已保存' });
+    eventBus.emit('toast', { type: 'success', message: t('msg.aiConfigSaved') });
   });
 }
 

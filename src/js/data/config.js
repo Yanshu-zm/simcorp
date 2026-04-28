@@ -8,6 +8,7 @@ export const COMPANY_LEVELS = [
     employeeLimit: 5,
     normalRecruitProb: { junior: 0.90, medium: 0.09, senior: 0.01 },
     unlocks: ['普通招募'],
+    unlocksEn: ['Normal Recruitment'],
   },
   {
     level: 2,
@@ -16,6 +17,7 @@ export const COMPANY_LEVELS = [
     employeeLimit: 10,
     normalRecruitProb: { junior: 0.75, medium: 0.20, senior: 0.05 },
     unlocks: ['精英招募'],
+    unlocksEn: ['Elite Recruitment'],
   },
   {
     level: 3,
@@ -24,6 +26,7 @@ export const COMPANY_LEVELS = [
     employeeLimit: 16,
     normalRecruitProb: { junior: 0.60, medium: 0.30, senior: 0.10 },
     unlocks: ['猎头招募'],
+    unlocksEn: ['Headhunter Recruitment'],
   },
 ];
 
@@ -43,8 +46,8 @@ export const BOSS_INITIAL = {
 };
 
 export const BOSS_ACTIONS = [
-  { id: 'entertainment', name: '娱乐', icon: 'gamepad-2', effect: '心情 +5~10', moodMin: 5, moodMax: 10, limit: 1, cost: 0 },
-  { id: 'training', name: '进修', icon: 'graduation-cap', effect: '能力 +2~5', abilityMin: 2, abilityMax: 5, limit: 1, cost: 5000 },
+  { id: 'entertainment', name: '娱乐', nameEn: 'Leisure', icon: 'gamepad-2', effect: '心情 +5~10', effectEn: 'Mood +5~10', moodMin: 5, moodMax: 10, limit: 1, cost: 0 },
+  { id: 'training', name: '进修', nameEn: 'Study', icon: 'graduation-cap', effect: '能力 +2~5', effectEn: 'Ability +2~5', abilityMin: 2, abilityMax: 5, limit: 1, cost: 5000 },
 ];
 
 // 员工头衔配置
@@ -88,6 +91,7 @@ export const TITLES = {
 };
 
 export const FUNCTIONS = ['建筑', '规划', '风林'];
+export const FUNCTIONS_EN = ['Arch', 'Planning', 'Landscape'];
 
 // 员工每月工作影响
 export const WORK_EFFECTS = {

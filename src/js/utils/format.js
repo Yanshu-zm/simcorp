@@ -14,12 +14,11 @@ export function formatPercent(value, decimals = 0) {
 
 /** 格式化月份显示 */
 export function formatMonth(month, year) {
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${monthNames[month - 1]} Year ${year}`;
-}
-
-/** 格式化月份中文 */
-export function formatMonthCN(month, year) {
+  const lang = localStorage.getItem('game-lang') || 'zh';
+  if (lang === 'en') {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${monthNames[month - 1]} Year ${year}`;
+  }
   return `第${year}年 ${month}月`;
 }
 

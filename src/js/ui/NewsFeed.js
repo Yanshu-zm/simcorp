@@ -1,23 +1,26 @@
-// ===== News Feed Component =====
 import gameEngine from '../engine/GameEngine.js';
+import { t, getCurrentLang } from '../utils/i18n.js';
 
 const DECORATIVE_MOMENTS = [
-  { name: 'Sarah Jenkins', time: '2h ago', text: '"刚完成项目报告，感觉很有成就感！"', likes: 14, comments: 3 },
-  { name: 'Marcus Thorne', time: '5h ago', text: '"新的咖啡机终于到了，小确幸。"', likes: 28, comments: 8 },
-  { name: 'Alex Rivera', time: '1d ago', text: '"团建活动太有趣了，期待下次！"', likes: 22, comments: 5 },
-  { name: 'Emily Chen', time: '2d ago', text: '"加班到深夜，但项目终于上线了。"', likes: 35, comments: 12 },
-  { name: 'David Kim', time: '3d ago', text: '"新同事技术真强，学到很多。"', likes: 18, comments: 4 },
+  { name: 'Sarah Jenkins', timeZh: '2小时前', timeEn: '2h ago', textZh: '"刚完成项目报告，感觉很有成就感！"', textEn: '"Just finished the report, feeling accomplished!"', likes: 14, comments: 3 },
+  { name: 'Marcus Thorne', timeZh: '5小时前', timeEn: '5h ago', textZh: '"新的咖啡机终于到了，小确幸。"', textEn: '"The new coffee machine is here! Small joys."', likes: 28, comments: 8 },
+  { name: 'Alex Rivera', timeZh: '1天前', timeEn: '1d ago', textZh: '"团建活动太有趣了，期待下次！"', textEn: '"Team building was so much fun, looking forward to the next one!"', likes: 22, comments: 5 },
+  { name: 'Emily Chen', timeZh: '2天前', timeEn: '2d ago', textZh: '"加班到深夜，但项目终于上线了。"', textEn: '"Late night overtime, but the project is finally live."', likes: 35, comments: 12 },
+  { name: 'David Kim', timeZh: '3天前', timeEn: '3d ago', textZh: '"新同事技术真强，学到很多。"', textEn: '"New colleague is super skilled, learned a lot."', likes: 18, comments: 4 },
 ];
 
 export function renderNewsFeed(pageType = 'default') {
   const news = gameEngine.gameState.newsLog.slice(0, 6);
+  const lang = getCurrentLang();
+
   const tagLabels = {
-    system: 'SYSTEM UPDATE',
-    market: 'MARKET EVENT',
-    warning: 'WARNING',
-    breaking: 'BREAKING',
-    personnel: 'PERSONNEL',
+    system: t('news.system'),
+    market: t('news.market'),
+    warning: t('news.warning'),
+    breaking: t('news.breaking'),
+    personnel: t('news.personnel'),
   };
+  
   const tagClasses = {
     system: 'news-item__tag--system',
     market: 'news-item__tag--market',
@@ -26,21 +29,8 @@ export function renderNewsFeed(pageType = 'default') {
     personnel: 'news-item__tag--personnel',
   };
 
-  const newsTitle = {
-    home: 'System News',
-    employee: 'Company News',
-    project: 'Market Pulse',
-    equipment: 'Corporate News',
-    default: 'System News',
-  }[pageType] || 'System News';
-
-  const momentsTitle = {
-    home: 'Employee Moments',
-    employee: 'Internal Moments',
-    project: 'Corporate Moments',
-    equipment: 'Office Moments',
-    default: 'Employee Moments',
-  }[pageType] || 'Employee Moments';
+  const newsTitle = t(`news.title.${pageType}`) || t('news.title.default');
+  const momentsTitle = t(`news.moments.${pageType}`) || t('news.moments.default');
 
   // Pick 2 random moments
   const moments = DECORATIVE_MOMENTS.sort(() => Math.random() - 0.5).slice(0, 2);
@@ -48,22 +38,28 @@ export function renderNewsFeed(pageType = 'default') {
   return `
     <div class="card" id="news-feed">
       <div class="card__title">${newsTitle}</div>
-      ${news.length === 0 ? '<div class="empty-state"><div class="empty-state__text">暂无新闻</div></div>' : ''}
-      ${news.map(n => `
+      ${news.length === 0 ? `<div class="empty-state"><div class="empty-state__text">${t('news.empty')}</div></div>` : ''}
+      ${news.map(n => {
+        const title = lang === 'en' ? n.titleEn || n.title : n.title;
+        const desc = lang === 'en' ? n.descEn || n.desc : n.desc;
+        return `
         <div class="news-item">
           <div class="news-item__tag ${tagClasses[n.tag] || 'news-item__tag--system'}">
             ${tagLabels[n.tag] || 'NEWS'}
           </div>
-          <div class="news-item__title">${n.title}</div>
-          <div class="news-item__desc">${n.desc}</div>
-          <div class="news-item__time">Year ${n.year}, Month ${n.month}</div>
+          <div class="news-item__title">${title}</div>
+          <div class="news-item__desc">${desc}</div>
+          <div class="news-item__time">${t('news.time').replace('{y}', n.year).replace('{m}', n.month)}</div>
         </div>
-      `).join('')}
+      `}).join('')}
     </div>
 
     <div class="card" style="margin-top: var(--space-xl);">
       <div class="card__title">${momentsTitle}</div>
-      ${moments.map(m => `
+      ${moments.map(m => {
+        const time = lang === 'en' ? m.timeEn : m.timeZh;
+        const text = lang === 'en' ? m.textEn : m.textZh;
+        return `
         <div class="news-item">
           <div style="display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-sm);">
             <div class="avatar avatar--initials" style="background:${getRandomColor()};width:32px;height:32px;font-size:0.7rem;">
@@ -71,18 +67,18 @@ export function renderNewsFeed(pageType = 'default') {
             </div>
             <div>
               <strong style="font-size:var(--font-size-sm);">${m.name}</strong>
-              <span class="text-muted" style="font-size:var(--font-size-xs);margin-left:var(--space-sm);">${m.time}</span>
+              <span class="text-muted" style="font-size:var(--font-size-xs);margin-left:var(--space-sm);">${time}</span>
             </div>
           </div>
           <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary);line-height:1.5;">
-            ${m.text}
+            ${text}
           </div>
           <div style="display:flex;gap:var(--space-lg);margin-top:var(--space-sm);font-size:var(--font-size-xs);color:var(--color-text-muted);">
             <span>👍 ${m.likes}</span>
             <span>💬 ${m.comments}</span>
           </div>
         </div>
-      `).join('')}
+      `}).join('')}
     </div>
   `;
 }

@@ -1,18 +1,17 @@
-// ===== Sidebar Component =====
-import gameEngine from '../engine/GameEngine.js';
 import router from '../router.js';
 import { formatMoney } from '../utils/format.js';
 import eventBus from '../eventBus.js';
+import { t } from '../utils/i18n.js';
 
 export function renderSidebar() {
   const company = gameEngine.companyManager;
   const initial = company.name ? company.name[0].toUpperCase() : 'S';
 
   const navItems = [
-    { id: 'company-stats', icon: 'layout-dashboard', label: 'COMPANY STATS', action: 'home' },
-    { id: 'boss-actions', icon: 'sparkles', label: 'BOSS ACTIONS', action: 'home' },
-    { id: 'recruitment', icon: 'user-plus', label: 'RECRUITMENT', action: 'employee' },
-    { id: 'inventory', icon: 'package', label: 'INVENTORY', action: 'equipment' },
+    { id: 'company-stats', icon: 'layout-dashboard', label: t('sidebar.companyStats'), action: 'home' },
+    { id: 'boss-actions', icon: 'sparkles', label: t('sidebar.bossActions'), action: 'home' },
+    { id: 'recruitment', icon: 'user-plus', label: t('sidebar.recruitment'), action: 'employee' },
+    { id: 'inventory', icon: 'package', label: t('sidebar.inventory'), action: 'equipment' },
   ];
 
   const currentPage = router.getCurrentPage();
@@ -23,7 +22,7 @@ export function renderSidebar() {
         <div class="sidebar__company-icon">${initial}</div>
         <div class="sidebar__company-info">
           <div class="sidebar__company-name">${company.name}</div>
-          <div class="sidebar__company-level">LEVEL ${company.level} ENTERPRISE</div>
+          <div class="sidebar__company-level">${t('sidebar.level').toUpperCase()} ${company.level} ENTERPRISE</div>
         </div>
       </div>
       <nav class="sidebar__nav">
@@ -37,15 +36,15 @@ export function renderSidebar() {
       </nav>
       <div class="sidebar__footer">
         <button class="sidebar__market-btn" id="btn-open-market">
-          OPEN MARKET
+          ${t('sidebar.openMarket')}
         </button>
         <div class="sidebar__footer-link" id="btn-ai-settings">
           <i data-lucide="bot" width="16" height="16"></i>
-          AI SETTINGS
+          ${t('sidebar.aiSettings')}
         </div>
         <div class="sidebar__footer-link" id="btn-save">
           <i data-lucide="save" width="16" height="16"></i>
-          SAVE
+          ${t('sidebar.save')}
         </div>
       </div>
     </aside>

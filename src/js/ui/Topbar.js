@@ -1,16 +1,17 @@
-// ===== Topbar Component =====
 import router from '../router.js';
 import eventBus from '../eventBus.js';
 import gameEngine from '../engine/GameEngine.js';
 import { showModal } from './Modal.js';
+import { t, setLanguage, getCurrentLang } from '../utils/i18n.js';
 
 export function renderTopbar() {
   const currentPage = router.getCurrentPage();
+  const lang = getCurrentLang();
   const tabs = [
-    { id: 'home', label: 'Home' },
-    { id: 'employee', label: 'Employee' },
-    { id: 'project', label: 'Project' },
-    { id: 'equipment', label: 'Equipment' },
+    { id: 'home', label: t('nav.home') },
+    { id: 'employee', label: t('nav.employee') },
+    { id: 'project', label: t('nav.project') },
+    { id: 'equipment', label: t('nav.equipment') },
   ];
 
   const companyName = gameEngine.companyManager.name;
@@ -19,7 +20,7 @@ export function renderTopbar() {
   return `
     <nav class="topbar" id="topbar">
       <div class="topbar__left">
-        <span class="topbar__brand">Tenure Business</span>
+        <span class="topbar__brand">${t('nav.brand')}</span>
         <div class="topbar__nav">
           ${tabs.map(t => `
             <div class="topbar__nav-item ${currentPage === t.id ? 'active' : ''}"
@@ -30,16 +31,16 @@ export function renderTopbar() {
         </div>
       </div>
       <div class="topbar__right">
-        <button class="topbar__icon-btn" id="btn-undo" data-tooltip="撤销 (Ctrl+Z)" style="display:none;">
+        <button class="topbar__icon-btn" id="btn-undo" data-tooltip="${t('tooltip.undo')}" style="display:none;">
           <i data-lucide="undo" width="18" height="18"></i>
         </button>
-        <button class="topbar__icon-btn" id="btn-notifications" data-tooltip="通知">
+        <button class="topbar__icon-btn" id="btn-notifications" data-tooltip="${t('tooltip.notifications')}">
           <i data-lucide="bell" width="18" height="18"></i>
         </button>
-        <button class="topbar__icon-btn" id="btn-help" data-tooltip="游戏指南">
+        <button class="topbar__icon-btn" id="btn-help" data-tooltip="${t('tooltip.help')}">
           <i data-lucide="help-circle" width="18" height="18"></i>
         </button>
-        <button class="topbar__icon-btn" id="btn-settings" data-tooltip="设置">
+        <button class="topbar__icon-btn" id="btn-settings" data-tooltip="${t('tooltip.settings')}">
           <i data-lucide="settings" width="18" height="18"></i>
         </button>
         <div class="topbar__avatar">${initial}</div>
@@ -87,7 +88,9 @@ export function bindTopbarEvents() {
   // Help button
   document.getElementById('btn-help')?.addEventListener('click', async () => {
     try {
-      const response = await fetch('./GameplayGuide.md');
+      const lang = getCurrentLang();
+      const fileName = lang === 'en' ? 'GameplayGuide_EN.md' : 'GameplayGuide.md';
+      const response = await fetch(`./${fileName}`);
       const text = await response.text();
       
       // Simple markdown-ish to HTML conversion
@@ -100,62 +103,77 @@ export function bindTopbarEvents() {
         .replace(/\n/gim, '<br>');
 
       showModal({
-        title: '游戏指南',
+        title: t('tooltip.help'),
         content: `<div style="max-height:60vh; overflow-y:auto; padding-right:10px; line-height:1.6; font-size:14px;">${html}</div>`,
         className: 'modal--lg'
       });
     } catch (error) {
-      eventBus.emit('toast', { type: 'danger', message: '无法加载指南' });
+      eventBus.emit('toast', { type: 'danger', message: t('msg.errorLoadingGuide') });
     }
   });
 
   // Notifications button
   document.getElementById('btn-notifications')?.addEventListener('click', () => {
-    eventBus.emit('toast', { type: 'info', message: '暂无提醒' });
+    eventBus.emit('toast', { type: 'info', message: t('msg.noNotifications') });
   });
 
-  // Settings button (Theme Switcher)
+  // Settings button (Theme & Language Switcher)
   document.getElementById('btn-settings')?.addEventListener('click', () => {
     const currentTheme = localStorage.getItem('game-theme') || 'default';
+    const currentLang = getCurrentLang();
     
     const content = `
       <div style="display:flex; flex-direction:column; gap:var(--space-md);">
-        <p style="font-size:var(--font-size-sm); color:var(--color-text-secondary); margin-bottom:var(--space-sm);">选择你喜欢的系统主题风格：</p>
-        <div class="theme-option ${currentTheme === 'default' ? 'active' : ''}" data-theme="default" style="display:flex; align-items:center; justify-content:space-between; padding:var(--space-lg); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer;">
-          <span>🌿 清新简约 (默认)</span>
-          ${currentTheme === 'default' ? '<i data-lucide="check" width="16" height="16"></i>' : ''}
+        <p style="font-size:var(--font-size-sm); color:var(--color-text-secondary); margin-bottom:var(--space-xs);">${t('settings.theme')}:</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--space-sm);">
+          <div class="theme-option ${currentTheme === 'default' ? 'active' : ''}" data-theme="default" style="padding:var(--space-md); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer; text-align:center;">
+            ${t('settings.theme.default')}
+          </div>
+          <div class="theme-option ${currentTheme === 'dark' ? 'active' : ''}" data-theme="dark" style="padding:var(--space-md); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer; text-align:center;">
+            ${t('settings.theme.dark')}
+          </div>
+          <div class="theme-option ${currentTheme === 'vivid' ? 'active' : ''}" data-theme="vivid" style="padding:var(--space-md); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer; text-align:center;">
+            ${t('settings.theme.vivid')}
+          </div>
         </div>
-        <div class="theme-option ${currentTheme === 'dark' ? 'active' : ''}" data-theme="dark" style="display:flex; align-items:center; justify-content:space-between; padding:var(--space-lg); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer;">
-          <span>🌙 深邃暗黑</span>
-          ${currentTheme === 'dark' ? '<i data-lucide="check" width="16" height="16"></i>' : ''}
-        </div>
-        <div class="theme-option ${currentTheme === 'vivid' ? 'active' : ''}" data-theme="vivid" style="display:flex; align-items:center; justify-content:space-between; padding:var(--space-lg); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer;">
-          <span>🔮 幻紫霓虹</span>
-          ${currentTheme === 'vivid' ? '<i data-lucide="check" width="16" height="16"></i>' : ''}
+
+        <p style="font-size:var(--font-size-sm); color:var(--color-text-secondary); margin-top:var(--space-md); margin-bottom:var(--space-xs);">${t('settings.language')}:</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-sm);">
+          <div class="lang-option ${currentLang === 'zh' ? 'active' : ''}" data-lang="zh" style="padding:var(--space-md); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer; text-align:center;">
+            简体中文
+          </div>
+          <div class="lang-option ${currentLang === 'en' ? 'active' : ''}" data-lang="en" style="padding:var(--space-md); border:1px solid var(--color-border); border-radius:var(--radius-md); cursor:pointer; text-align:center;">
+            English
+          </div>
         </div>
       </div>
     `;
 
     const modal = showModal({
-      title: '系统设置',
+      title: t('settings.title'),
       content,
-      footer: '<button class="btn btn--secondary" id="settings-close">关闭</button>'
+      footer: `<button class="btn btn--secondary" id="settings-close">${t('btn.close')}</button>`
     });
 
     modal.querySelectorAll('.theme-option').forEach(opt => {
       opt.addEventListener('click', () => {
-        const theme = opt.dataset.theme;
-        applyTheme(theme);
-        // Refresh modal to show checkmark (or just close)
-        const overlay = document.querySelector('.modal-overlay');
-        if (overlay) overlay.remove();
-        eventBus.emit('toast', { type: 'success', message: '主题设置成功' });
+        applyTheme(opt.dataset.theme);
+        closeModal(modal);
+        eventBus.emit('toast', { type: 'success', message: t('toast.themeSuccess') });
+      });
+    });
+
+    modal.querySelectorAll('.lang-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        setLanguage(opt.dataset.lang);
+        gameEngine.gameState.language = opt.dataset.lang;
+        closeModal(modal);
+        eventBus.emit('toast', { type: 'success', message: t('toast.langSuccess') });
       });
     });
 
     document.getElementById('settings-close')?.addEventListener('click', () => {
-      const overlay = document.querySelector('.modal-overlay');
-      if (overlay) overlay.remove();
+      closeModal(modal);
     });
   });
 }
