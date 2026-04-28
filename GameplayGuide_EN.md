@@ -1,155 +1,139 @@
-# 📈 SimCorp - Planning Boss Simulator — Complete Gameplay Guide
+# 📈 SimCorp Simulation —— Complete Gameplay Guide
 
-Welcome to **SimCorp - Planning Boss Simulator**! This is a business simulation game centered around running a company, managing employees, and taking on projects. This guide will walk you through every system and mechanic to help you grow from scratch into a top-tier planning mogul.
+Welcome to the *SimCorp Simulation*! This is a business simulation game centered around managing a company, employees, and projects. This guide will explain all the systems and gameplay mechanics in detail, helping you grow from scratch into an industry-leading tycoon.
 
 ---
 
-## 🎯 1. Win & Lose Conditions
+## 🎯 1. Game Objectives & Conditions
 
-The essence of the game is dynamically balancing resources (funds, employees, progress).
+The core of the game is the dynamic balance of resource management (funds, employees, progress).
 
-### 🏆 Victory Conditions (achieve either one):
+### 🏆 Victory Conditions (achieve either):
 1. **Financial Freedom**: Company funds reach **$10,000,000**.
-2. **Industry Leader**: Reach **Company Level 3** and complete a **TOP-tier** project.
+2. **Industry Dominance**: Company level reaches **Level 3**, and you successfully complete at least one **TOP-tier** rarity project.
 
 ### 💀 Defeat Condition (Bankruptcy):
-- Company funds **drop below $0** **AND** you have **no employees** left.
-*(Note: If funds are negative but employees are still working, you can still recover by completing projects!)*
+- Company funds **drop below $0**, **AND** there are **no employees** in the company (all resigned or fired).
+*(Note: If your funds are negative but you still have employees working, you can still turn the tide by completing projects!)*
 
 ---
 
-## ⏱️ 2. Core Loop: Monthly Settlement System
+## ⏱️ 2. Core Loop: Monthly Settlement
 
-The game progresses in **turns**. The **"Next Month"** button in the bottom-right corner is your only way to advance time. Each click triggers:
+The game progresses in a **turn-based** manner. The **"Next Month"** button in the bottom right is the only way to advance time. Each click triggers the core loop:
 
-1. **Project Progress**: All projects with assigned employees advance based on employee ability.
-2. **Deductions**:
-   - Deduct all employees' **monthly salaries**.
-   - Deduct all equipment **maintenance costs**.
-   - Working employees' **stress increases** and **mood decreases**.
-   - Equipment **durability degrades**.
-3. **Settlement**:
-   - Projects reaching 100% award **generous rewards** and company EXP.
-   - Projects exceeding their deadline incur heavy **overdue penalties**.
-   - Employees with stress > 100 or mood < 10 **resign immediately** (costly compensation required).
-   - Equipment at 0 durability becomes non-functional.
-4. **Random Events**: There's a **50%** chance of a random event each month (good or bad). Distribution: 30% good, 30% neutral, 40% bad.
-5. **Balance Notes**: Project efficiency has been **reduced by 15%** globally, and base stress growth for working employees is **increased by 30%**. You'll need high-quality teamwork and equipment support.
+1. **Project Progress**: All projects with assigned employees will progress based on the employees' ability stats.
+2. **Status Deductions**:
+   - Deduct the **monthly salary** of all active employees.
+   - Deduct the **monthly maintenance fee** for all equipment.
+   - All working employees will have their **stress increased** and **mood decreased**.
+   - All equipment will lose **durability**.
+3. **Settlement Logic**:
+   - If a project reaches 100% progress, you receive a **massive reward** and company experience.
+   - If a project exceeds the maximum allowed duration, you will be hit with hefty **overtime penalties**.
+   - If an employee's stress exceeds 100 or mood drops below 10, they will **resign immediately**, and you must pay a huge severance package.
+   - If an equipment's durability drops to 0, it breaks and requires repair.
+4. **Random Events**: There is a **50%** chance every month to trigger a random event. The probability distribution is: 30% Good, 30% Neutral, 40% Bad.
+5. **Balance Note**: Due to fierce industry competition, **overall project efficiency has been nerfed by 15%**, and **base stress growth for working employees has been increased by 30%**. You must rely heavily on high-quality employees and equipment buffs to survive.
 
 ---
 
 ## 🏢 3. Home: Company & Boss System
 
-Your headquarters as the boss.
+This is your headquarters as the boss.
 
-### 📊 Company Level & EXP
-- Completing projects earns company EXP.
-- When EXP and funds meet requirements, you can **upgrade the company** (max Level 3):
-  - **Level 1→2**: Requires **500 EXP** and **$300,000**.
-  - **Level 2→3**: Requires **1500 EXP** and **$600,000**.
-- **Upgrade Benefits**:
-  - Increased employee capacity.
-  - Unlock advanced recruitment methods.
-  - Rarer, higher-reward projects appear in the market.
+### 📊 Company Level & Experience
+- Completing projects grants company experience (EXP).
+- When experience and funds meet the requirements, you can **upgrade the company** (Max Level 3).
+  - **Level 1 to 2**: Requires **500 EXP** and **$300,000** funds.
+  - **Level 2 to 3**: Requires **1500 EXP** and **$600,000** funds.
+- **Benefits of Upgrading**:
+  - Increases the maximum number of employees.
+  - Unlocks higher-tier recruitment (Elite, Headhunter).
+  - Unlocks rarer and more lucrative projects in the market (SR, SSR, TOP).
 
 ### 🧑‍💼 Boss Stats & Actions
-- **Boss Mood**: Affects crisis resistance.
-- **Boss Ability**: Higher ability means more progress when pushing employees with overtime.
-- **Boss Actions**: Spend funds on **[Study]** (boost ability) or **[Relax]** (boost mood).
+Your personal stats affect company operations:
+- **Boss Mood**: Affects risk resistance against random events.
+- **Boss Ability**: When interacting with employees using high-pressure tactics like "Overtime Crunch", higher boss ability extracts more extra project progress.
+- **Boss Actions**: You can spend funds on **[Training]** (boosts ability) or **[Entertainment]** (boosts mood).
 
 ---
 
 ## 👥 4. Employee System (Core Assets)
 
-Employees are your only money-making tool. Recruit, nurture, push, and appease them.
+Employees are the only tools for making money. You need to recruit, nurture, squeeze, and pacify them.
 
-### 🔍 Recruitment
-Three recruitment methods:
-1. **Normal Recruitment** ($500, Level 1): Basic junior employees. *Free during campus recruitment season (March & September)!*
-2. **Elite Recruitment** ($5,000, Level 2): High chance of medium-level employees.
-3. **Headhunter** ($12,000, Level 3): High chance of Senior or Top-tier talent.
-4. **Recruitment Limit**: Max **10 total recruitments per month** across all types.
+### 🔍 Talent Acquisition
+In the "Employee" page, there are three recruitment methods:
+1. **Normal ($500, Level 1)**: Only recruits mediocre Junior employees. *Note: Normal recruitment is completely free during the campus hiring seasons in March and September!*
+2. **Elite ($5,000, Level 2)**: High chance of recruiting Medium-level employees with solid stats.
+3. **Headhunter ($12,000, Level 3)**: High chance of recruiting Senior or Top-tier talent directly.
+4. **Recruitment Limit**: To prevent blind expansion, **all recruitment types are capped at a total of 10 times per month**. Use your job postings wisely.
 
 ### 📋 Core Employee Stats
-- **Title**: Junior → Medium → Senior → Top. Promote with funds for massive ability boosts.
-- **Functions**: Architecture (ARCH), Planning (PLN), Landscape (LAN). Matching functions boost project efficiency.
-- **Ability**: Determines monthly project progress contribution.
+- **Title**: Junior -> Medium -> Senior -> Top. You can spend money to **Promote** employees, significantly boosting their ability and allowing them to tackle more specialized projects.
+- **Function/Category**: e.g., Architecture (ARCH), Planning (PLN), Landscape (LAN). Matching the function speeds up project progress.
+- **Ability**: Determines how much project progress the employee contributes each month.
 - **Mood & Stress**:
-  - **Red Alert**: Mood < 10 or Stress > 100 = employee quits next month!
-  - Low mood or high stress causes output penalties.
-- **Traits**: Passive skills like "Slacker" (low efficiency), "Stress Expert" (slow stress growth), etc.
+  - **Red Line Warning**: Mood < 10 or Stress > 100 means the employee will run away next month!
+  - Low mood or high stress inflicts a "slacking" penalty, reducing actual output.
+- **Traits**: Passive skills unique to each employee. E.g., "Slacker" (low efficiency), "Resilient" (stress grows slower), "Greedy" (high salary demands).
 
-### 💬 Interaction & Management (INTERACT)
-- **Talk / Team Building**: Spend money to restore mood and reduce stress.
-- **Overtime Sprint**: Instantly boost project progress at the cost of mood/stress spikes.
-- **Raise Salary**: Permanently increase salary but instantly max out mood.
-- **Training**: Permanently boost ability with investment.
-- **Paid Leave**: No work for the month, but massive state recovery.
+### 💬 Interaction & Exploitation (INTERACT)
+To manage mood and stress, you can interact with them:
+- **Chat/Team Building**: Spend money or time to restore mood and lower stress.
+- **Overtime Crunch**: Instantly boosts current project progress massively, but mood plummets and stress skyrockets.
+- **Raise Salary**: Permanently increases salary but instantly maxes out mood.
+- **Specialized Training**: Spend money to permanently increase ability.
+- **Paid Leave**: No work this month (0 progress), but massively restores status.
 
-### 🤖 AI Chat
-Click **[💬 Chat]** on any employee card to have a real conversation!
-- Each employee has a unique AI personality based on their mood, stress, and traits.
-- **Words have consequences**: Encouragement boosts mood; pressure or harsh words increase stress.
+### 🤖 AI Chat System
+Click the **[💬 Chat]** button on an employee card to type and talk directly to them!
+- Each employee is an independent AI personality. They reply based on their mood, stress, traits, and current project status.
+- **Chat is Action**: Your words have real consequences. Encouraging them might boost mood; abusing or pressuring them will spike their stress and tank their mood.
 
 ---
 
-## 💼 5. Project System (Main Income)
+## 💼 5. Project System (Main Revenue)
 
-Without projects, the company is doomed.
+Without projects, the company dies.
 
 ### 🛒 Market Bidding
-- The **Project Market** refreshes **5 new projects** monthly, ranging from R to TOP rarity.
-- Higher rarity = better rewards but harder to complete.
-- **Bidding**: Assign an employee whose ability meets the minimum bid requirement.
-  - Success rate starts at **60%** when ability equals the threshold, +0.4% per extra point. 100% at threshold + 100.
+- The **Project Market** refreshes **5** new projects every month, categorized by rarity (R, SR, SSR, TOP).
+- Higher rarity means greater rewards but harder completion.
+- **Bidding Mechanic**:
+  - You must assign an employee whose ability meets the "Minimum Bid Requirement" to bid.
+  - **Win Rate**: Not 100% guaranteed. Meeting the exact minimum requirement gives a **60%** win rate. Every extra point of ability adds 0.4%. You only get a 100% win rate if the employee's ability exceeds the requirement by **100 points**.
 
-| Rarity | Min Bid Ability | 100% Bid Ability | Reward Range |
-| :--- | :--- | :--- | :--- |
-| **R** | 30 | 130 | $45k - $105k |
-| **SR** | 100 | 200 | $120k - $270k |
-| **SSR** | 180 | 280 | $300k - $750k |
-| **TOP** | 200 | 300 | $1.35M - $2.25M |
-
-### ⚙️ Execution
-- Accepted projects enter "Active" status. **Assign** idle employees to work on them.
-- Multiple employees can work on one project.
-- **Overdue Penalties**: Each project has a max duration. Exceeding it incurs **monthly penalty fees** until completion.
+### ⚙️ Project Execution
+- Once accepted, projects enter the "Active" state. You must **[Assign]** idle employees to work on them.
+- Multiple employees can work on the same project.
+- **Crucial Mechanic: Overtime Penalty**. Every project has a maximum allowed duration (Max Months). If it doesn't reach 100% progress within the time limit, a **penalty will be deducted every month** thereafter until completed. Delayed projects can easily bankrupt you.
 
 ---
 
-## 💻 6. Equipment System (Support Buffs)
+## 💻 6. Equipment System (Logistical Buffs)
 
-Good tools make for good work.
+Good tools are prerequisite to the successful execution of a job.
 
-- **Equipment Limit**: Max **6 items** simultaneously.
-- **Selling**: Sell unwanted equipment from inventory.
-  - **Resale Value**: `(Current Durability / Max Durability) × Original Price`.
-- **Durability & Repair**: Durability decreases monthly. At 0, the item breaks and buffs disappear. Repair costs 50% of the purchase price.
+- **Capacity Limit**: Office space is limited; you can only own a maximum of **6** equipment items simultaneously (including broken ones).
+- **Selling Equipment**: Unneeded equipment can be **[Sold]** from the inventory. 
+  - **Recycle Value**: `(Current Durability / Max Durability) * Original Price`.
+- **Durability & Repair**: Equipment loses durability every month. At 0 durability, it breaks and its buffs vanish. You must spend 50% of its original price to **Repair** it. Don't forget to maintain key equipment!
 
 ---
 
-## 🎲 7. Roguelike Elements: Talents & Events
+## 🎲 7. Roguelite Elements: Talents & Events
 
-### 🌟 Starting Talent
-A random boss talent is assigned at game start (re-roll unlimited times).
+### 🌟 Starting Talents
+When starting a new game, you roll a random Boss Talent (you can reroll infinitely).
 Examples:
-- **Trust Fund**: Starting funds doubled.
-- **Charismatic Leader**: Employee stress growth reduced.
-- **Well-Connected**: Higher chance of rare projects.
+- **Rich Kid**: Starting funds doubled.
+- **Charismatic Leader**: Employee stress growth is slower.
+- **Well-Connected**: High-tier projects appear more frequently.
 
 ### ⚡ Random Events
-Every 3 months, a guaranteed event triggers — potentially devastating or incredibly lucky.
-- **Bad**: Industry downturn, hacker attacks, employee strikes.
-- **Good**: Government subsidies, inspiration bursts, reputation boosts.
-
----
-
-## 💡 Beginner Tips
-
-1. **Don't overreach**: Avoid SR projects early on. Overdue penalties can bankrupt you.
-2. **Employees aren't machines**: Watch the mood bar. Spend a little on team building before they quit — resignation compensation is brutal.
-3. **Match specializations**: Matching employee functions to project categories doubles efficiency.
-4. **Invest in yourself**: Boss ability becomes critical for overtime sprints in late game.
-5. **Buy a good chair early**: Equipment that reduces mood decay or stress growth pays for itself many times over.
-
-Good luck building your SimCorp empire! 🚀
+Every 3 months, a random event will definitively trigger.
+- **Bad Events**: Industry Winter (increased penalties), Hacker Attack (progress rolled back), Strike.
+- **Good Events**: Govt Subsidy (free money), Burst of Inspiration (free progress), Fame Boost.

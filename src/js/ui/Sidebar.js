@@ -1,3 +1,5 @@
+// ===== Sidebar Component =====
+import gameEngine from '../engine/GameEngine.js';
 import router from '../router.js';
 import { formatMoney } from '../utils/format.js';
 import eventBus from '../eventBus.js';
@@ -22,7 +24,7 @@ export function renderSidebar() {
         <div class="sidebar__company-icon">${initial}</div>
         <div class="sidebar__company-info">
           <div class="sidebar__company-name">${company.name}</div>
-          <div class="sidebar__company-level">${t('sidebar.level').toUpperCase()} ${company.level} ENTERPRISE</div>
+          <div class="sidebar__company-level">${t('sidebar.levelLabel', { level: company.level })}</div>
         </div>
       </div>
       <nav class="sidebar__nav">

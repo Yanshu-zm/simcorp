@@ -1,3 +1,4 @@
+// ===== AI Settings Modal =====
 import { PROVIDERS, loadAIConfig, saveAIConfig, clearAIConfig, getProviderConfig } from '../ai/aiConfig.js';
 import aiService from '../ai/AIService.js';
 import { showModal, closeModal } from './Modal.js';
@@ -18,10 +19,10 @@ export function openAISettings() {
     </div>
 
     <div class="ai-settings__field">
-      <label class="ai-settings__label">${t('ai.settings.apiKey')}</label>
+      <label class="ai-settings__label">API Key</label>
       <div class="ai-settings__key-row">
         <input type="password" class="ai-settings__input" id="ai-key-input"
-               value="${cfg.apiKey || ''}" placeholder="${t('ai.settings.keyPlaceholder')}" />
+               value="${cfg.apiKey || ''}" placeholder="API Key" />
         <div class="ai-settings__key-toggle" id="ai-key-toggle">
           <i data-lucide="eye" width="16" height="16"></i>
         </div>
@@ -29,7 +30,7 @@ export function openAISettings() {
     </div>
 
     <div class="ai-settings__field">
-      <label class="ai-settings__label">${t('ai.settings.model')}</label>
+      <label class="ai-settings__label">${t('ai.model')}</label>
       <select class="ai-settings__select" id="ai-model-select">
         ${getProviderConfig(cfg.provider).models.map(m =>
           `<option value="${m}" ${cfg.model === m ? 'selected' : ''}>${m}</option>`
@@ -38,7 +39,7 @@ export function openAISettings() {
     </div>
 
     <div class="ai-settings__field">
-      <label class="ai-settings__label">${t('ai.settings.lang')}</label>
+      <label class="ai-settings__label">${t('ai.replyLanguage')}</label>
       <select class="ai-settings__select" id="ai-lang-select">
         <option value="zh" ${cfg.language === 'zh' ? 'selected' : ''}>中文</option>
         <option value="en" ${cfg.language === 'en' ? 'selected' : ''}>English</option>
@@ -47,10 +48,10 @@ export function openAISettings() {
 
     <div style="display:flex;gap:var(--space-md);">
       <button class="btn btn--outline btn--full" id="ai-test-btn">
-        <i data-lucide="wifi" width="14" height="14"></i> ${t('ai.settings.test')}
+        <i data-lucide="wifi" width="14" height="14"></i> ${t('ai.testConnection')}
       </button>
       <button class="btn btn--outline" id="ai-clear-btn" style="color:var(--color-danger);">
-        ${t('ai.settings.clear')}
+        ${t('ai.clear')}
       </button>
     </div>
 
@@ -58,16 +59,16 @@ export function openAISettings() {
 
     <div class="ai-settings__hint">
       <i data-lucide="shield" width="14" height="14" style="flex-shrink:0;margin-top:1px;"></i>
-      <div>${t('ai.settings.hint')}</div>
+      <div>${t('ai.apiKeyHint')}</div>
     </div>
   `;
 
   const modal = showModal({
-    title: t('ai.settings.title'),
+    title: `⚙️ ${t('ai.settingsTitle')}`,
     content,
     footer: `
-      <button class="btn btn--secondary" id="ai-cancel">${t('btn.close')}</button>
-      <button class="btn btn--primary" id="ai-save">${t('btn.save')}</button>
+      <button class="btn btn--secondary" id="ai-cancel">${t('emp.cancel')}</button>
+      <button class="btn btn--primary" id="ai-save">${t('ai.saveSettings')}</button>
     `,
   });
 
@@ -99,7 +100,7 @@ export function openAISettings() {
   modal.querySelector('#ai-test-btn')?.addEventListener('click', async () => {
     const resultEl = modal.querySelector('#ai-test-result');
     if (!resultEl) return;
-    resultEl.innerHTML = `<div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-md);">${t('ai.settings.testing')}</div>`;
+    resultEl.innerHTML = `<div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-md);">${t('ai.testing')}</div>`;
 
     // Temporarily save config for test
     const tempCfg = collectFormConfig(modal);
@@ -107,9 +108,9 @@ export function openAISettings() {
 
     const result = await aiService.testConnection();
     if (result.success) {
-      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--success">${t('ai.settings.testSuccess')}</div>`;
+      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--success">✅ ${t('ai.testSuccess')}</div>`;
     } else {
-      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--error">${t('ai.settings.testFail').replace('{error}', result.error)}</div>`;
+      resultEl.innerHTML = `<div class="ai-settings__test-result ai-settings__test-result--error">❌ ${t('ai.testFail')}: ${result.error}</div>`;
     }
   });
 
@@ -117,7 +118,7 @@ export function openAISettings() {
   modal.querySelector('#ai-clear-btn')?.addEventListener('click', () => {
     clearAIConfig();
     closeModal(modal);
-    eventBus.emit('toast', { type: 'info', message: t('msg.aiConfigCleared') });
+    eventBus.emit('toast', { type: 'info', message: t('ai.cleared') });
   });
 
   // Cancel
@@ -128,7 +129,7 @@ export function openAISettings() {
     const newCfg = collectFormConfig(modal);
     saveAIConfig(newCfg);
     closeModal(modal);
-    eventBus.emit('toast', { type: 'success', message: t('msg.aiConfigSaved') });
+    eventBus.emit('toast', { type: 'success', message: t('ai.saved') });
   });
 }
 

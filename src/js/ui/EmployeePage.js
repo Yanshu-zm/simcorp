@@ -1,3 +1,4 @@
+// ===== Employee Page =====
 import gameEngine from '../engine/GameEngine.js';
 import { renderNewsFeed } from './NewsFeed.js';
 import { formatMoney } from '../utils/format.js';
@@ -6,7 +7,7 @@ import { TITLES, RECRUIT, INTERACTIONS, PROMOTION_COSTS, MONTHLY_RECRUIT_LIMIT }
 import { isPositiveTrait } from '../data/traits.js';
 import { openChatPanel } from './ChatPanel.js';
 import eventBus from '../eventBus.js';
-import { t, getCurrentLang } from '../utils/i18n.js';
+import { t, tData, tCat } from '../utils/i18n.js';
 
 export function renderEmployeePage() {
   const company = gameEngine.companyManager;
@@ -27,24 +28,24 @@ export function renderEmployeePage() {
       <!-- Talent Acquisition -->
       <div class="card talent-acquisition">
         <div class="talent-acquisition__header">
-          <div class="card__title" style="margin-bottom:0;">${t('emp.talentAcq')} <span style="font-size:var(--font-size-sm);color:var(--color-text-muted);font-weight:400;">(${gameEngine.gameState.recruitsThisMonth}/${MONTHLY_RECRUIT_LIMIT} ${t('emp.monthlyLimit')})</span></div>
-          <div class="talent-acquisition__budget">${t('home.funds')}: ${formatMoney(company.funds)}</div>
+          <div class="card__title" style="margin-bottom:0;">${t('emp.talentAcquisition')} <span style="font-size:var(--font-size-sm);color:var(--color-text-muted);font-weight:400;">${t('emp.recruitUsed', { used: gameEngine.gameState.recruitsThisMonth, limit: MONTHLY_RECRUIT_LIMIT })}</span></div>
+          <div class="talent-acquisition__budget">${t('emp.budget')}: ${formatMoney(company.funds)}</div>
         </div>
 
         <div class="recruit-types">
           <div class="recruit-type active" data-recruit="normal" id="recruit-normal">
             <i data-lucide="users" width="24" height="24"></i>
-            ${t('emp.normal')} ($500)
+            ${t('emp.normalRecruit')} ($500)
           </div>
           <div class="recruit-type ${canElite ? '' : 'recruit-type--locked'}" data-recruit="elite" id="recruit-elite">
             <i data-lucide="star" width="24" height="24"></i>
-            ${t('emp.elite')} ($5k)
-            ${!canElite ? `<span style="font-size:var(--font-size-xs);">${t('sidebar.level')} 2</span>` : ''}
+            ${t('emp.eliteRecruit')} ($5k)
+            ${!canElite ? `<span style="font-size:var(--font-size-xs);">${t('emp.locked')}</span>` : ''}
           </div>
           <div class="recruit-type ${canHeadhunter ? '' : 'recruit-type--locked'}" data-recruit="headhunter" id="recruit-headhunter">
             <i data-lucide="target" width="24" height="24"></i>
-            ${t('emp.headhunter')} ($12k)
-            ${!canHeadhunter ? `<span style="font-size:var(--font-size-xs);">${t('sidebar.level')} 3</span>` : ''}
+            ${t('emp.headhunterRecruit')} ($12k)
+            ${!canHeadhunter ? `<span style="font-size:var(--font-size-xs);">${t('emp.locked')}</span>` : ''}
           </div>
         </div>
 
@@ -61,7 +62,7 @@ export function renderEmployeePage() {
       <!-- Active Workforce -->
       <div class="workforce-section">
         <div class="workforce-section__header">
-          <div class="workforce-section__title">${t('emp.activeWorkforce')}</div>
+          <div class="workforce-section__title">${t('emp.workforce')}</div>
           <input type="text" class="workforce-section__search" placeholder="${t('emp.searchPlaceholder')}" id="employee-search" />
         </div>
 
@@ -69,7 +70,7 @@ export function renderEmployeePage() {
           ${employees.length === 0 ? `
             <div class="empty-state" style="grid-column:1/-1;">
               <div class="empty-state__icon"><i data-lucide="user-x" width="48" height="48"></i></div>
-              <div class="empty-state__text">${t('emp.emptyState')}</div>
+              <div class="empty-state__text">暂无员工，请先进行招聘</div>
             </div>
           ` : employees.map(emp => renderEmployeeCard(emp)).join('')}
         </div>
@@ -79,7 +80,6 @@ export function renderEmployeePage() {
 }
 
 function renderEmployeeCard(emp) {
-  const lang = getCurrentLang();
   const titleConfig = TITLES[emp.title];
   const titleClass = emp.title === 'top' ? 'tag--top' : emp.title === 'senior' ? 'tag--senior' : emp.title === 'medium' ? 'tag--medium' : 'tag--junior';
   const efficiency = Math.round(gameEngine.employeeManager.getEfficiency(emp) * 100);
@@ -93,19 +93,19 @@ function renderEmployeeCard(emp) {
   const moodColor = moodPct < 30 ? 'danger' : moodPct < 60 ? 'warning' : 'info';
 
   const statuses = new Set();
-  if (emp.forceResting) statuses.add(t('emp.status.vacation'));
-  if (gameEngine.gameState.interactionsThisMonth[`${emp.id}_rush`]) statuses.add(t('emp.status.rush'));
-  if (gameEngine.gameState.interactionsThisMonth[`${emp.id}_overtime`]) statuses.add(t('emp.status.overtime'));
+  if (emp.forceResting) statuses.add(tData(INTERACTIONS.find(i=>i.id==='forceRest'), 'name'));
+  if (gameEngine.gameState.interactionsThisMonth[`${emp.id}_rush`]) statuses.add(tData(INTERACTIONS.find(i=>i.id==='rush'), 'name'));
+  if (gameEngine.gameState.interactionsThisMonth[`${emp.id}_overtime`]) statuses.add(tData(INTERACTIONS.find(i=>i.id==='overtime'), 'name'));
   const statusTagsHTML = Array.from(statuses).map(s => 
-    `<span class="tag tag--${(s === t('emp.status.vacation')) ? 'neutral' : 'warning'}" style="margin-left:4px; border: 1px solid currentColor; background: transparent;">${s}</span>`
+    `<span class="tag tag--warning" style="margin-left:4px; border: 1px solid currentColor; background: transparent;">${s}</span>`
   ).join('');
 
   return `
     <div class="employee-card" id="emp-card-${emp.id}">
       <div style="margin-bottom:var(--space-sm);">
-        <span class="tag ${titleClass}">${titleConfig.nameEn.toUpperCase()}</span>
-        ${emp.canPromote ? `<span class="promote-badge">⬆ ${t('emp.promoteBadge')}</span>` : ''}
-        ${emp.assignedProjectId ? `<span class="tag tag--success" style="margin-left:4px;">${t('emp.status.working')}</span>` : ''}
+        <span class="tag ${titleClass}">${tData(titleConfig, 'name').toUpperCase()}</span>
+        ${emp.canPromote ? `<span class="promote-badge">⬆ ${t('emp.promote')}</span>` : ''}
+        ${emp.assignedProjectId ? `<span class="tag tag--success" style="margin-left:4px;">${t('emp.assignMatch')}</span>` : ''}
         ${statusTagsHTML}
       </div>
       <div class="employee-card__header">
@@ -114,45 +114,44 @@ function renderEmployeeCard(emp) {
         </div>
         <div class="employee-card__info">
           <div class="employee-card__name">${emp.firstName} ${emp.lastName}</div>
-          <div class="employee-card__role">${emp.functions.join(' / ')}</div>
+          <div class="employee-card__role">${emp.functions.map(tCat).join(' / ')}</div>
         </div>
       </div>
 
       <div class="employee-card__stats">
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">${t('emp.stats.stress')} <span class="stat-value">${Math.round(emp.stress)}</span></div>
+          <div class="employee-card__stat-label">STRESS <span class="stat-value">${Math.round(emp.stress)}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--${stressColor}" style="width:${stressPct}%"></div></div>
         </div>
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">${t('emp.stats.ability')} <span class="stat-value">${emp.ability}</span></div>
+          <div class="employee-card__stat-label">ABILITY <span class="stat-value">${emp.ability}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--gradient" style="width:${abilityPct}%"></div></div>
         </div>
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">${t('emp.stats.mood')} <span class="stat-value">${Math.round(emp.mood)}</span></div>
+          <div class="employee-card__stat-label">MOOD <span class="stat-value">${Math.round(emp.mood)}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--${moodColor}" style="width:${moodPct}%"></div></div>
         </div>
         <div class="employee-card__stat-item">
-          <div class="employee-card__stat-label">${t('emp.stats.salary')} <span class="stat-value">${formatMoney(emp.salary)}</span></div>
+          <div class="employee-card__stat-label">SALARY <span class="stat-value">${formatMoney(emp.salary)}</span></div>
           <div class="progress"><div class="progress__fill progress__fill--warning" style="width:${salaryPct}%"></div></div>
         </div>
       </div>
 
       <div class="trait-tags">
-        ${emp.traits.map(trait => {
-          const positive = isPositiveTrait(trait);
-          const name = lang === 'en' ? trait.nameEn : trait.name;
-          return `<span class="trait-tag trait-tag--${positive ? 'positive' : 'negative'}">${name}</span>`;
+        ${emp.traits.map(tr => {
+          const positive = isPositiveTrait(tr);
+          return `<span class="trait-tag trait-tag--${positive ? 'positive' : 'negative'}">${tData(tr, 'name')}</span>`;
         }).join('')}
       </div>
 
       <div class="employee-card__actions" style="margin-top:var(--space-md);">
-        <button class="btn btn--danger btn--sm" data-fire="${emp.id}">${t('btn.fire')}</button>
-        <button class="btn btn--outline btn--sm ${emp.canPromote ? '' : 'btn--disabled'}" data-promote="${emp.id}">${t('btn.promote')}</button>
-        <button class="btn btn--outline btn--sm" data-interact="${emp.id}">${t('btn.interact')}</button>
+        <button class="btn btn--danger btn--sm" data-fire="${emp.id}">${t('emp.fire')}</button>
+        <button class="btn btn--outline btn--sm ${emp.canPromote ? '' : 'btn--disabled'}" data-promote="${emp.id}">${t('emp.promote')}</button>
+        <button class="btn btn--outline btn--sm" data-interact="${emp.id}">${t('emp.interact')}</button>
         <button class="btn btn--primary btn--sm" data-assign-emp="${emp.id}">
-          ${emp.assignedProjectId ? t('btn.reassign') : t('btn.assign')}
+          ${emp.assignedProjectId ? t('emp.reassign') : t('emp.assign')}
         </button>
-        <button class="btn btn--outline btn--sm" data-chat="${emp.id}" style="color:var(--color-primary);">💬 ${t('btn.chat')}</button>
+        <button class="btn btn--outline btn--sm" data-chat="${emp.id}" style="color:var(--color-primary);">${t('emp.chat')}</button>
       </div>
     </div>
   `;
@@ -179,19 +178,19 @@ export function bindEmployeePageEvents() {
 
       // Check monthly limit
       if (gameEngine.gameState.recruitsThisMonth >= MONTHLY_RECRUIT_LIMIT) {
-        eventBus.emit('toast', { type: 'error', message: `${t('msg.recruitLimit')} (${MONTHLY_RECRUIT_LIMIT} ${t('emp.monthlyLimit')})！` });
+        eventBus.emit('toast', { type: 'error', message: t('emp.recruitLimit', { limit: MONTHLY_RECRUIT_LIMIT }) });
         return;
       }
 
       // Check cost
       if (gameEngine.companyManager.funds < config.cost) {
-        eventBus.emit('toast', { type: 'error', message: `${t('msg.insufficientFunds')}！${t('confirm.promoteCost')}: ${formatMoney(config.cost)}` });
+        eventBus.emit('toast', { type: 'error', message: t('emp.insufficientFunds', { cost: formatMoney(config.cost) }) });
         return;
       }
 
       // Check employee limit
       if (gameEngine.employeeManager.employees.length >= gameEngine.companyManager.getEmployeeLimit()) {
-        eventBus.emit('toast', { type: 'error', message: t('msg.empLimit') });
+        eventBus.emit('toast', { type: 'error', message: t('equip.limitReached', { limit: gameEngine.companyManager.getEmployeeLimit() }) });
         return;
       }
 
@@ -219,13 +218,10 @@ export function bindEmployeePageEvents() {
       if (!emp) return;
 
       showModal({
-        title: t('confirm.fireTitle'),
-        content: `<p>${t('confirm.fireText').replace('{name}', `<strong>${emp.firstName} ${emp.lastName}</strong>`)}</p>
-                  <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm);margin-top:var(--space-md);">
-                    ${t('confirm.fireCompensate')}: ${formatMoney(emp.salary)}
-                  </p>`,
-        footer: `<button class="btn btn--secondary" id="modal-cancel">${t('btn.close')}</button>
-                 <button class="btn btn--danger" id="modal-confirm-fire">${t('btn.fire')}</button>`,
+        title: t('emp.fire'),
+        content: `<p>${t('emp.confirmFire', { name: `<strong>${emp.firstName} ${emp.lastName}</strong>`, cost: formatMoney(emp.salary) })}</p>`,
+        footer: `<button class="btn btn--secondary" id="modal-cancel">${t('emp.cancel')}</button>
+                 <button class="btn btn--danger" id="modal-confirm-fire">${t('emp.fire')}</button>`,
       });
 
       document.getElementById('modal-confirm-fire')?.addEventListener('click', () => {
@@ -237,7 +233,7 @@ export function bindEmployeePageEvents() {
         gameEngine.employeeManager.fireEmployee(empId);
         gameEngine.companyManager.addFunds(-emp.salary);
         closeModal(document.querySelector('.modal-overlay'));
-        eventBus.emit('toast', { type: 'info', message: t('msg.fireSuccess').replace('{name}', emp.firstName) });
+        eventBus.emit('toast', { type: 'info', message: t('emp.fireSuccess', { name: emp.firstName }) });
         eventBus.emit('ui:refresh');
       });
 
@@ -256,22 +252,19 @@ export function bindEmployeePageEvents() {
 
       const cost = PROMOTION_COSTS[emp.title];
       if (gameEngine.companyManager.funds < cost) {
-        eventBus.emit('toast', { type: 'error', message: `${t('msg.insufficientFunds')}！${t('confirm.promoteCost')}: ${formatMoney(cost)}` });
+        eventBus.emit('toast', { type: 'error', message: t('emp.insufficientFunds', { cost: formatMoney(cost) }) });
         return;
       }
 
-      const nextTitleKey = TITLES[emp.title].nextTitle;
-      const nextTitleName = getCurrentLang() === 'en' ? TITLES[nextTitleKey].nameEn : TITLES[nextTitleKey].name;
-
       showModal({
-        title: t('confirm.promoteTitle'),
-        content: `<p>${t('confirm.promoteText').replace('{name}', `<strong>${emp.firstName} ${emp.lastName}</strong>`).replace('{title}', nextTitleName)}</p>
+        title: t('emp.promote'),
+        content: `<p>将 <strong>${emp.firstName} ${emp.lastName}</strong> 晋升为 ${tData(TITLES[TITLES[emp.title].nextTitle], 'name')}？</p>
                   <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm);margin-top:var(--space-md);">
-                    ${t('confirm.promoteCost')}: ${formatMoney(cost)}<br>
-                    ${t('confirm.promoteDesc')}
+                    晋升费用: ${formatMoney(cost)}<br>
+                    薪资将重新随机生成，职能+1，特性可能变化
                   </p>`,
-        footer: `<button class="btn btn--secondary" id="modal-cancel">${t('btn.close')}</button>
-                 <button class="btn btn--primary" id="modal-confirm-promote">${t('btn.promote')}</button>`,
+        footer: `<button class="btn btn--secondary" id="modal-cancel">${t('emp.cancel')}</button>
+                 <button class="btn btn--primary" id="modal-confirm-promote">${t('emp.promote')}</button>`,
       });
 
       document.getElementById('modal-confirm-promote')?.addEventListener('click', () => {
@@ -279,7 +272,7 @@ export function bindEmployeePageEvents() {
         gameEngine.companyManager.addFunds(-cost);
         gameEngine.employeeManager.promoteEmployee(empId);
         closeModal(document.querySelector('.modal-overlay'));
-        eventBus.emit('toast', { type: 'success', message: t('msg.promoteSuccess').replace('{name}', emp.firstName) });
+        eventBus.emit('toast', { type: 'success', message: t('emp.promoteSuccess', { name: emp.firstName, ability: gameEngine.employeeManager.getEmployee(empId).ability }) });
         eventBus.emit('ui:refresh');
       });
 
@@ -327,7 +320,6 @@ export function bindEmployeePageEvents() {
 }
 
 function renderCandidates(candidates) {
-  const lang = getCurrentLang();
   const container = document.getElementById('recruit-results');
   if (!container || !candidates) return;
 
@@ -336,7 +328,6 @@ function renderCandidates(candidates) {
       ${candidates.map(c => {
         const titleConfig = TITLES[c.title];
         const titleClass = c.title === 'senior' ? 'tag--senior' : c.title === 'medium' ? 'tag--medium' : 'tag--junior';
-        const titleName = lang === 'en' ? titleConfig.nameEn : titleConfig.name;
         return `
         <div class="recruit-candidate" id="candidate-${c.id}">
           <div class="recruit-candidate__header">
@@ -345,27 +336,26 @@ function renderCandidates(candidates) {
             </div>
             <div>
               <div class="recruit-candidate__name">${c.firstName} ${c.lastName}</div>
-              <span class="tag ${titleClass}" style="margin-top:2px;">${titleName}</span>
-              <div class="recruit-candidate__title">${c.functions.join(' / ')}</div>
+              <span class="tag ${titleClass}" style="margin-top:2px;">${tData(titleConfig, 'name')}</span>
+              <div class="recruit-candidate__title">${c.functions.map(tCat).join(' / ')}</div>
             </div>
             <div class="recruit-candidate__ability">
-              <div class="recruit-candidate__ability-label">${t('emp.stats.ability')}</div>
+              <div class="recruit-candidate__ability-label">Ability</div>
               <div class="recruit-candidate__ability-value">${c.ability}</div>
             </div>
           </div>
           <div class="recruit-candidate__detail">
-            <div class="recruit-candidate__detail-label">Function: ${c.functions.join(' / ')}</div>
+            <div class="recruit-candidate__detail-label">Function: ${c.functions.map(tCat).join(' / ')}</div>
             <div class="progress" style="margin-top:4px;"><div class="progress__fill progress__fill--gradient" style="width:${Math.min(100,c.ability/220*100)}%"></div></div>
           </div>
           <div class="recruit-candidate__detail">
-            <div class="recruit-candidate__detail-label" style="color:var(--color-warning);">${t('emp.stats.salary')}: ${formatMoney(c.salary)} / month</div>
+            <div class="recruit-candidate__detail-label" style="color:var(--color-warning);">Salary: ${formatMoney(c.salary)} / month</div>
             <div class="progress" style="margin-top:4px;"><div class="progress__fill progress__fill--warning" style="width:${Math.min(100,c.salary/40000*100)}%"></div></div>
           </div>
           <div class="trait-tags" style="margin-top:var(--space-sm);">
-            ${c.traits.map(trait => {
-              const positive = isPositiveTrait(trait);
-              const name = lang === 'en' ? trait.nameEn : trait.name;
-              return `<span class="trait-tag trait-tag--${positive ? 'positive' : 'negative'}">${name}</span>`;
+            ${c.traits.map(tr => {
+              const positive = isPositiveTrait(tr);
+              return `<span class="trait-tag trait-tag--${positive ? 'positive' : 'negative'}">${tData(tr, 'name')}</span>`;
             }).join('')}
           </div>
           <button class="btn btn--primary btn--full" style="margin-top:var(--space-md);" data-hire='${JSON.stringify(c)}'>
@@ -380,7 +370,7 @@ function renderCandidates(candidates) {
   container.querySelectorAll('[data-hire]').forEach(btn => {
     btn.addEventListener('click', () => {
       if (gameEngine.employeeManager.employees.length >= gameEngine.companyManager.getEmployeeLimit()) {
-        eventBus.emit('toast', { type: 'error', message: t('msg.empLimit') });
+        eventBus.emit('toast', { type: 'error', message: t('equip.limitReached', { limit: gameEngine.companyManager.getEmployeeLimit() }) });
         return;
       }
       const empData = JSON.parse(btn.dataset.hire);
@@ -398,7 +388,6 @@ function renderCandidates(candidates) {
 }
 
 function showInteractModal(empId) {
-  const lang = getCurrentLang();
   const emp = gameEngine.employeeManager.getEmployee(empId);
   if (!emp) return;
 
@@ -409,7 +398,7 @@ function showInteractModal(empId) {
       </div>
       <div>
         <div style="font-weight:600;font-size:var(--font-size-lg);">${emp.firstName} ${emp.lastName}</div>
-        <div style="font-size:var(--font-size-sm);color:var(--color-text-muted);">${t('emp.stats.mood')}: ${Math.round(emp.mood)} | ${t('emp.stats.stress')}: ${Math.round(emp.stress)} | ${t('emp.stats.ability')}: ${emp.ability}</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-muted);">心情: ${Math.round(emp.mood)} | 压力: ${Math.round(emp.stress)} | 能力: ${emp.ability}</div>
       </div>
     </div>
     <div class="interact-options">
@@ -419,16 +408,14 @@ function showInteractModal(empId) {
         const cooling = inter.cooldown > 0 && emp.interactionCooldowns[inter.id] > 0;
         const needsProject = inter.requiresProject && !emp.assignedProjectId;
         const disabled = used || cooling || needsProject;
-        const name = lang === 'en' ? inter.nameEn : inter.name;
-        const effect = lang === 'en' ? inter.effectsEn : inter.effects;
 
         return `
         <div class="interact-option ${disabled ? 'interact-option--disabled' : ''}" data-interaction="${inter.id}" data-emp="${empId}">
           <div class="interact-option__info">
-            <div class="interact-option__name">${name}</div>
-            <div class="interact-option__effect">${effect.replace(/\n/g, ' | ')}</div>
+            <div class="interact-option__name">${tData(inter, 'name')}</div>
+            <div class="interact-option__effect">${tData(inter, 'effects').replace(/\n/g, ' | ')}</div>
             ${disabled ? `<div style="font-size:var(--font-size-xs);color:var(--color-danger);margin-top:2px;">
-              ${used ? (lang === 'en' ? 'Used this month' : '本月已使用') : cooling ? (lang === 'en' ? 'Cooling' : '冷却中') : (lang === 'en' ? 'Needs project' : '需要参与项目')}
+              ${used ? t('emp.usedThisMonth') : cooling ? t('emp.cooling') : t('emp.needsProject')}
             </div>` : ''}
           </div>
           ${inter.cost > 0 ? `<div class="interact-option__cost">${formatMoney(inter.cost)}</div>` : ''}
@@ -437,7 +424,7 @@ function showInteractModal(empId) {
     </div>
   `;
 
-  const modal = showModal({ title: t('modal.interactTitle'), content });
+  const modal = showModal({ title: t('emp.interaction'), content });
 
   modal.querySelectorAll('.interact-option:not(.interact-option--disabled)').forEach(el => {
     el.addEventListener('click', () => {
@@ -446,7 +433,7 @@ function showInteractModal(empId) {
 
       // Check cost
       if (interaction.cost > 0 && gameEngine.companyManager.funds < interaction.cost) {
-        eventBus.emit('toast', { type: 'error', message: t('msg.insufficientFunds') });
+        eventBus.emit('toast', { type: 'error', message: t('emp.insufficientFunds', { cost: formatMoney(interaction.cost) }) });
         return;
       }
 
@@ -460,8 +447,7 @@ function showInteractModal(empId) {
       const result = gameEngine.performInteraction(empId, interactionId);
       if (result && result.success) {
         closeModal(modal);
-        const name = lang === 'en' ? interaction.nameEn : interaction.name;
-        eventBus.emit('toast', { type: 'success', message: `${name} Done!` });
+        eventBus.emit('toast', { type: 'success', message: `${tData(interaction, 'name')} 完成！` });
         eventBus.emit('ui:refresh');
       } else if (result) {
         eventBus.emit('toast', { type: 'warning', message: result.reason });
@@ -471,21 +457,20 @@ function showInteractModal(empId) {
 }
 
 function showAssignModal(empId) {
-  const lang = getCurrentLang();
   const emp = gameEngine.employeeManager.getEmployee(empId);
   if (!emp) return;
 
   const projects = gameEngine.projectManager.activeProjects;
   if (projects.length === 0) {
-    eventBus.emit('toast', { type: 'warning', message: t('msg.noProjects') });
+    eventBus.emit('toast', { type: 'warning', message: t('emp.noProjects') });
     return;
   }
 
   showModal({
-    title: `${t('btn.assign')}: ${emp.firstName} ${emp.lastName}`,
+    title: t('emp.assignTitle', { name: `${emp.firstName} ${emp.lastName}` }),
     content: `
       <div style="padding:var(--space-md);">
-        <p style="margin-bottom:var(--space-md);color:var(--color-text-secondary);">${t('modal.selectProject')}：</p>
+        <p style="margin-bottom:var(--space-md);color:var(--color-text-secondary);">${t('emp.assignSelect')}</p>
         <div class="assign-project-list" style="display:flex;flex-direction:column;gap:var(--space-sm);">
           ${projects.map(p => {
             const isMatch = emp.functions.includes(p.category);
@@ -496,9 +481,9 @@ function showAssignModal(empId) {
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                   <div>
                     <div style="font-weight:600;">${p.name}</div>
-                    <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">${p.rarity} | ${p.category}</div>
+                    <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">${p.rarity} | ${tCat(p.category)}</div>
                   </div>
-                  ${isMatch ? `<span class="tag tag--success">${t('tag.match')}</span>` : `<span class="tag">${t('tag.cross')}</span>`}
+                  ${isMatch ? `<span class="tag tag--success">${t('emp.assignMatch')}</span>` : `<span class="tag">${t('emp.assignCross')}</span>`}
                 </div>
               </div>
             `;
@@ -506,7 +491,7 @@ function showAssignModal(empId) {
         </div>
       </div>
     `,
-    footer: `<button class="btn btn--secondary" id="modal-cancel">${t('btn.close')}</button>`,
+    footer: `<button class="btn btn--secondary" id="modal-cancel">${t('emp.cancel')}</button>`,
   });
 
   document.querySelectorAll('[data-assign-project-id]').forEach(item => {
@@ -532,7 +517,7 @@ function showAssignModal(empId) {
       const success = gameEngine.projectManager.assignEmployee(projectId, empId);
       if (success) {
         emp.assignedProjectId = projectId;
-        eventBus.emit('toast', { type: 'success', message: t('msg.assignSuccess').replace('{name}', emp.firstName).replace('{project}', project.name) });
+        eventBus.emit('toast', { type: 'success', message: t('emp.assignSuccess', { emp: emp.firstName, project: project.name }) });
         eventBus.emit('ui:refresh');
         closeModal(document.querySelector('.modal-overlay'));
       }
@@ -543,4 +528,3 @@ function showAssignModal(empId) {
     closeModal(document.querySelector('.modal-overlay'));
   });
 }
-

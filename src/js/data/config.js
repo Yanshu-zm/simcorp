@@ -8,7 +8,6 @@ export const COMPANY_LEVELS = [
     employeeLimit: 5,
     normalRecruitProb: { junior: 0.90, medium: 0.09, senior: 0.01 },
     unlocks: ['普通招募'],
-    unlocksEn: ['Normal Recruitment'],
   },
   {
     level: 2,
@@ -17,7 +16,6 @@ export const COMPANY_LEVELS = [
     employeeLimit: 10,
     normalRecruitProb: { junior: 0.75, medium: 0.20, senior: 0.05 },
     unlocks: ['精英招募'],
-    unlocksEn: ['Elite Recruitment'],
   },
   {
     level: 3,
@@ -26,7 +24,6 @@ export const COMPANY_LEVELS = [
     employeeLimit: 16,
     normalRecruitProb: { junior: 0.60, medium: 0.30, senior: 0.10 },
     unlocks: ['猎头招募'],
-    unlocksEn: ['Headhunter Recruitment'],
   },
 ];
 
@@ -46,7 +43,7 @@ export const BOSS_INITIAL = {
 };
 
 export const BOSS_ACTIONS = [
-  { id: 'entertainment', name: '娱乐', nameEn: 'Leisure', icon: 'gamepad-2', effect: '心情 +5~10', effectEn: 'Mood +5~10', moodMin: 5, moodMax: 10, limit: 1, cost: 0 },
+  { id: 'entertainment', name: '娱乐', nameEn: 'Relax', icon: 'gamepad-2', effect: '心情 +5~10', effectEn: 'Mood +5~10', moodMin: 5, moodMax: 10, limit: 1, cost: 0 },
   { id: 'training', name: '进修', nameEn: 'Study', icon: 'graduation-cap', effect: '能力 +2~5', effectEn: 'Ability +2~5', abilityMin: 2, abilityMax: 5, limit: 1, cost: 5000 },
 ];
 
@@ -91,7 +88,7 @@ export const TITLES = {
 };
 
 export const FUNCTIONS = ['建筑', '规划', '风林'];
-export const FUNCTIONS_EN = ['Arch', 'Planning', 'Landscape'];
+export const FUNCTIONS_EN = { '建筑': 'Architecture', '规划': 'Planning', '风林': 'Landscape' };
 
 // 员工每月工作影响
 export const WORK_EFFECTS = {
@@ -194,9 +191,10 @@ export const PROMOTION_COSTS = {
 export const INTERACTIONS = [
   {
     id: 'rush',
-    name: '催进度',
+    name: '催进度', nameEn: 'Rush',
     color: 'warning',
     effects: '进度 +3~8 ×(1+老板能力/200)\n心情 -3, 压力 +5\n20%概率: 失误 -3进度',
+    effectsEn: 'Progress +3~8 ×(1+boss/200)\nMood -3, Stress +5\n20% chance: mistake -3',
     applyEffect: (emp, boss) => {
       const mult = 1 + boss.ability / 200;
       let progress = (3 + Math.random() * 5) * mult;
@@ -213,9 +211,10 @@ export const INTERACTIONS = [
   },
   {
     id: 'overtime',
-    name: '加班冲刺',
+    name: '加班冲刺', nameEn: 'Overtime Sprint',
     color: 'danger',
     effects: '进度 +10 ×(1+老板能力/200)\n心情 -6, 压力 +10\n下月效率 -15%',
+    effectsEn: 'Progress +10 ×(1+boss/200)\nMood -6, Stress +10\nNext month eff. -15%',
     applyEffect: (emp, boss) => {
       const mult = 1 + boss.ability / 200;
       const progress = 10 * mult;
@@ -230,9 +229,10 @@ export const INTERACTIONS = [
   },
   {
     id: 'specialTraining',
-    name: '专项培训',
+    name: '专项培训', nameEn: 'Special Training',
     color: 'info',
     effects: '能力 +2~5\n心情 +2, 压力 +2\n费用: $8,000',
+    effectsEn: 'Ability +2~5\nMood +2, Stress +2\nCost: $8,000',
     applyEffect: (emp) => {
       const abilityGain = 2 + Math.floor(Math.random() * 4);
       emp.ability += abilityGain;
@@ -245,9 +245,10 @@ export const INTERACTIONS = [
   },
   {
     id: 'teamBuilding',
-    name: '团建活动',
+    name: '团建活动', nameEn: 'Team Building',
     color: 'success',
     effects: '心情 +5~10, 压力 -5\n10%概率: 无效果\n费用: $8,000',
+    effectsEn: 'Mood +5~10, Stress -5\n10% chance: no effect\nCost: $8,000',
     applyEffect: (emp) => {
       if (Math.random() < 0.1) {
         return { failed: true, moodChange: 0, stressChange: 0 };
@@ -262,9 +263,10 @@ export const INTERACTIONS = [
   },
   {
     id: 'talk',
-    name: '单独谈话',
+    name: '单独谈话', nameEn: 'One-on-One Talk',
     color: 'primary',
     effects: '心情 +4, 压力 -2\n冷却: 2个月',
+    effectsEn: 'Mood +4, Stress -2\nCooldown: 2 months',
     applyEffect: (emp) => {
       emp.mood += 4;
       emp.stress -= 2;
@@ -275,9 +277,10 @@ export const INTERACTIONS = [
   },
   {
     id: 'forceRest',
-    name: '强制休息',
+    name: '强制休息', nameEn: 'Forced Rest',
     color: 'info',
     effects: '心情 +15, 压力 -20\n当月无项目进度\n下月效率 +10%',
+    effectsEn: 'Mood +15, Stress -20\nNo progress this month\nNext month eff. +10%',
     applyEffect: (emp) => {
       emp.mood += 15;
       emp.stress -= 20;
@@ -290,9 +293,10 @@ export const INTERACTIONS = [
   },
   {
     id: 'raise',
-    name: '涨薪',
+    name: '涨薪', nameEn: 'Raise Salary',
     color: 'warning',
     effects: '心情 +10, 压力 -5\n薪资 +1,000',
+    effectsEn: 'Mood +10, Stress -5\nSalary +1,000',
     applyEffect: (emp) => {
       emp.mood += 10;
       emp.stress -= 5;

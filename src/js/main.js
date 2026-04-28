@@ -15,6 +15,7 @@ import router from './router.js';
 import eventBus from './eventBus.js';
 import { hasSave } from './utils/storage.js';
 import { formatMoney, formatMonthCN } from './utils/format.js';
+import { t, tData, tResult } from './utils/i18n.js';
 
 import { renderTopbar, bindTopbarEvents } from './ui/Topbar.js';
 import { renderSidebar, bindSidebarEvents } from './ui/Sidebar.js';
@@ -40,24 +41,24 @@ function showStartScreen() {
       <div class="start-screen">
         <div class="start-screen__content">
           <div class="start-screen__logo">SimCorp</div>
-          <div class="start-screen__subtitle">规划老总模拟器</div>
+          <div class="start-screen__subtitle">${t('start.subtitle')}</div>
 
           <div class="start-screen__input-group">
-            <label class="start-screen__label">公司名称</label>
+            <label class="start-screen__label">${t('start.companyName')}</label>
             <input type="text" class="start-screen__input" id="company-name-input" 
-                   placeholder="输入你的公司名称" value="SimCorp" maxlength="20" />
+                   placeholder="${t('start.placeholder')}" value="SimCorp" maxlength="20" />
           </div>
 
           <div class="start-screen__talent">
-            <div class="start-screen__talent-title">你的天赋</div>
-            <div class="start-screen__talent-name">${currentTalent.icon} ${currentTalent.name}</div>
-            <div class="start-screen__talent-desc">${currentTalent.desc}</div>
-            <button class="start-screen__talent-reroll" id="btn-reroll">🎲 重新抽取</button>
+            <div class="start-screen__talent-title">${t('start.talent')}</div>
+            <div class="start-screen__talent-name">${currentTalent.icon} ${tData(currentTalent, 'name')}</div>
+            <div class="start-screen__talent-desc">${tData(currentTalent, 'desc')}</div>
+            <button class="start-screen__talent-reroll" id="btn-reroll">${t('start.reroll')}</button>
           </div>
 
           <div class="start-screen__actions">
-            <button class="start-screen__btn-start" id="btn-start">开始游戏</button>
-            ${hasExistingSave ? '<button class="start-screen__btn-load" id="btn-load">继续存档</button>' : ''}
+            <button class="start-screen__btn-start" id="btn-start">${t('start.begin')}</button>
+            ${hasExistingSave ? `<button class="start-screen__btn-load" id="btn-load">${t('start.load')}</button>` : ''}
           </div>
         </div>
       </div>
@@ -96,7 +97,7 @@ function showGameLayout() {
     </main>
     <button class="fab-next-month" id="btn-next-month">
       <i data-lucide="arrow-right-circle" width="20" height="20"></i>
-      下一月
+      ${t('fab.nextMonth')}
       <span class="fab-next-month__month" id="fab-month-display"></span>
     </button>
   `;
@@ -197,26 +198,26 @@ function performNextMonth() {
   // Show settlement modal
   let settlementHTML = '<div style="max-height:400px;overflow-y:auto;">';
 
-  // Random event (Moved to TOP for visibility)
+  // Random event
   if (settlement.randomEvent) {
     const evt = settlement.randomEvent;
     settlementHTML += `<div class="event-card" style="padding:var(--space-lg); margin-bottom:var(--space-lg); border: 2px solid var(--color-primary);">
       <div class="event-card__icon event-card__icon--${evt.event.type === 'positive' ? 'positive' : evt.event.type === 'negative' ? 'negative' : 'neutral'}">
         ${evt.event.type === 'positive' ? '🎉' : evt.event.type === 'negative' ? '⚠️' : '📋'}
       </div>
-      <div class="event-card__title">【突发事件】${evt.event.name}</div>
-      <div class="event-card__desc">${evt.event.desc}</div>
-      <div style="margin-top:var(--space-md);font-weight:600;color:var(--color-primary);">${evt.resultMessage}</div>
+      <div class="event-card__title">${t('settle.randomEvent', { name: tData(evt.event, 'name') })}</div>
+      <div class="event-card__desc">${tData(evt.event, 'desc')}</div>
+      <div style="margin-top:var(--space-md);font-weight:600;color:var(--color-primary);">${tResult(evt.resultMessage)}</div>
     </div>`;
   }
 
   // Project progress
   if (settlement.projectResults.length > 0) {
-    settlementHTML += '<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">📋 项目进展</h4>';
+    settlementHTML += `<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">${t('settle.projectProgress')}</h4>`;
     settlement.projectResults.forEach(r => {
       if (r.completed) {
         settlementHTML += `<div class="settlement-item">
-          <span class="settlement-item__label">✅ ${r.project.name} 完成！</span>
+          <span class="settlement-item__label">${t('settle.completed', { name: r.project.name })}</span>
           <span class="settlement-item__value settlement-item__value--positive">+${formatMoney(r.reward)}</span>
         </div>`;
       } else {
@@ -226,7 +227,7 @@ function performNextMonth() {
         </div>`;
         if (r.penalty > 0) {
           settlementHTML += `<div class="settlement-item">
-            <span class="settlement-item__label" style="color:var(--color-danger);">  ⚠ 超时罚款</span>
+            <span class="settlement-item__label" style="color:var(--color-danger);">${t('settle.overtimePenalty')}</span>
             <span class="settlement-item__value settlement-item__value--negative">-${formatMoney(r.penalty)}</span>
           </div>`;
         }
@@ -236,30 +237,30 @@ function performNextMonth() {
 
   // Financials
   settlementHTML += '<div class="divider"></div>';
-  settlementHTML += '<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">💰 财务结算</h4>';
+  settlementHTML += `<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">${t('settle.financials')}</h4>`;
   settlementHTML += `<div class="settlement-item">
-    <span class="settlement-item__label">员工薪资</span>
+    <span class="settlement-item__label">${t('settle.salary')}</span>
     <span class="settlement-item__value settlement-item__value--negative">-${formatMoney(settlement.salaryTotal)}</span>
   </div>`;
   if (settlement.maintenanceCost > 0) {
     settlementHTML += `<div class="settlement-item">
-      <span class="settlement-item__label">设备维护</span>
+      <span class="settlement-item__label">${t('settle.equipMaintenance')}</span>
       <span class="settlement-item__value settlement-item__value--negative">-${formatMoney(settlement.maintenanceCost)}</span>
     </div>`;
   }
   settlementHTML += `<div class="settlement-item" style="font-weight:700;border-top:2px solid var(--color-border);padding-top:var(--space-md);">
-    <span>当前资金</span>
+    <span>${t('settle.currentFunds')}</span>
     <span style="color:${gameEngine.companyManager.funds >= 0 ? 'var(--color-success)' : 'var(--color-danger)'};">${formatMoney(gameEngine.companyManager.funds)}</span>
   </div>`;
 
   // Broken equipment
   if (settlement.brokenEquipment.length > 0) {
     settlementHTML += '<div class="divider"></div>';
-    settlementHTML += '<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">🔧 设备状态</h4>';
+    settlementHTML += `<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">${t('settle.equipStatus')}</h4>`;
     settlement.brokenEquipment.forEach(item => {
       settlementHTML += `<div class="settlement-item">
-        <span class="settlement-item__label" style="color:var(--color-danger);">⚠ ${item.name} 已损坏</span>
-        <span class="settlement-item__value">需维修</span>
+        <span class="settlement-item__label" style="color:var(--color-danger);">${t('settle.equipBroken', { name: item.name })}</span>
+        <span class="settlement-item__value">${t('settle.needsRepair')}</span>
       </div>`;
     });
   }
@@ -267,11 +268,11 @@ function performNextMonth() {
   // Resigned employees
   if (settlement.resignedEmployees.length > 0) {
     settlementHTML += '<div class="divider"></div>';
-    settlementHTML += '<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">👋 员工变动</h4>';
+    settlementHTML += `<h4 style="margin-bottom:var(--space-md);font-size:var(--font-size-base);">${t('settle.empChanges')}</h4>`;
     settlement.resignedEmployees.forEach(emp => {
       settlementHTML += `<div class="settlement-item">
-        <span class="settlement-item__label" style="color:var(--color-danger);">${emp.firstName} ${emp.lastName} 已离职</span>
-        <span class="settlement-item__value settlement-item__value--negative">补偿 -${formatMoney(emp.salary)}</span>
+        <span class="settlement-item__label" style="color:var(--color-danger);">${t('settle.resigned', { name: emp.firstName + ' ' + emp.lastName })}</span>
+        <span class="settlement-item__value settlement-item__value--negative">${t('settle.severance', { amount: formatMoney(emp.salary) })}</span>
       </div>`;
     });
   }
@@ -282,31 +283,29 @@ function performNextMonth() {
   if (settlement.gameOver) {
     settlementHTML += `<div style="text-align:center;padding:var(--space-2xl);background:var(--color-danger-light);border-radius:var(--radius-lg);margin-top:var(--space-xl);">
       <div style="font-size:2rem;margin-bottom:var(--space-md);">💀</div>
-      <div style="font-size:var(--font-size-xl);font-weight:700;color:var(--color-danger);">游戏结束</div>
-      <div style="color:var(--color-text-secondary);margin-top:var(--space-sm);">公司资产为负，所有员工已离职。</div>
+      <div style="font-size:var(--font-size-xl);font-weight:700;color:var(--color-danger);">${t('settle.gameOver')}</div>
+      <div style="color:var(--color-text-secondary);margin-top:var(--space-sm);">${t('settle.gameOverDesc')}</div>
     </div>`;
   }
 
   // Win
   if (settlement.won) {
-    const winMsg = gameEngine.gameState.winType === 'funds' ? '资金达到 $10,000,000！' : '完成了顶级项目！';
+    const winMsg = gameEngine.gameState.winType === 'funds' ? t('settle.victoryFunds') : t('settle.victoryProject');
     settlementHTML += `<div style="text-align:center;padding:var(--space-2xl);background:var(--color-success-light);border-radius:var(--radius-lg);margin-top:var(--space-xl);">
       <div style="font-size:2rem;margin-bottom:var(--space-md);">🏆</div>
-      <div style="font-size:var(--font-size-xl);font-weight:700;color:var(--color-success);">胜利！</div>
+      <div style="font-size:var(--font-size-xl);font-weight:700;color:var(--color-success);">${t('settle.victory')}</div>
       <div style="color:var(--color-text-secondary);margin-top:var(--space-sm);">${winMsg}</div>
-      <button class="btn btn--primary" style="margin-top:var(--space-lg);" id="btn-infinite-mode">继续无限模式</button>
+      <button class="btn btn--primary" style="margin-top:var(--space-lg);" id="btn-infinite-mode">${t('settle.infiniteMode')}</button>
     </div>`;
   }
 
-  const monthLabel = formatMonthCN(gameEngine.gameState.month, gameEngine.gameState.year);
-
   const modal = showModal({
-    title: `📊 ${monthLabel} 月报`,
+    title: t('settle.title', { month: gameEngine.gameState.month }),
     content: settlementHTML,
     className: 'settlement-modal',
     footer: settlement.gameOver
-      ? '<button class="btn btn--primary" id="modal-restart">重新开始</button>'
-      : '<button class="btn btn--primary" id="modal-ok">确认</button>',
+      ? `<button class="btn btn--primary" id="modal-restart">${t('settle.restart')}</button>`
+      : `<button class="btn btn--primary" id="modal-ok">${t('settle.confirm')}</button>`,
   });
 
   modal.querySelector('#modal-ok')?.addEventListener('click', () => {

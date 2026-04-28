@@ -3,7 +3,7 @@ import chatManager from '../ai/ChatManager.js';
 import aiService from '../ai/AIService.js';
 import gameEngine from '../engine/GameEngine.js';
 import eventBus from '../eventBus.js';
-import { t } from '../utils/i18n.js';
+import { t, tCat } from '../utils/i18n.js';
 
 let currentEmpId = null;
 let isStreaming = false;
@@ -31,13 +31,12 @@ export function openChatPanel(empId) {
         <div class="chat-panel__info">
           <div class="chat-panel__name">💬 ${emp.firstName} ${emp.lastName}</div>
           <div class="chat-panel__meta">
-            <span>${t(`chat.title.${emp.title}`) || emp.title}</span>
+            <span>${emp.title === 'senior' ? 'Senior' : emp.title === 'medium' ? 'Medium' : 'Junior'}</span>
             <span>·</span>
-            <span>${emp.functions.join('/')}</span>
+            <span>${emp.functions.map(tCat).join('/')}</span>
             <span>·</span>
-            <span>${t('emp.stats.mood')}:${Math.round(emp.mood)}</span>
-            <span>·</span>
-            <span>${t('emp.stats.stress')}:${Math.round(emp.stress)}</span>
+            <span>${t('chat.mood')}:${Math.round(emp.mood)}</span>
+            <span>${t('chat.stress')}:${Math.round(emp.stress)}</span>
           </div>
         </div>
         <div class="chat-panel__close" id="chat-close">
@@ -47,8 +46,8 @@ export function openChatPanel(empId) {
 
       ${!configured ? `
         <div class="chat-panel__banner">
-          ${t('chat.banner')} ·
-          <a id="chat-open-settings" style="cursor:pointer; text-decoration:underline;">${t('chat.goToSettings')}</a>
+          ⚠️ ${t('chat.noApiWarning')} ·
+          <a id="chat-open-settings">${t('chat.goSettings')}</a>
         </div>
       ` : ''}
 
@@ -59,7 +58,7 @@ export function openChatPanel(empId) {
 
       <div class="chat-panel__input-area">
         <input type="text" class="chat-panel__input" id="chat-input"
-               placeholder="${t('chat.inputPlaceholder')}" autocomplete="off" />
+               placeholder="${t('chat.placeholder')}" autocomplete="off" />
         <div class="chat-panel__send" id="chat-send">
           <i data-lucide="send" width="16" height="16"></i>
         </div>
@@ -68,10 +67,10 @@ export function openChatPanel(empId) {
       <div class="chat-panel__footer">
         <div class="chat-panel__footer-actions">
           <div class="chat-panel__footer-btn" id="chat-settings-btn">
-            <i data-lucide="settings" width="12" height="12"></i> ${t('tooltip.settings')}
+            <i data-lucide="settings" width="12" height="12"></i> ${t('sidebar.aiSettings')}
           </div>
           <div class="chat-panel__footer-btn" id="chat-clear-btn">
-            <i data-lucide="trash-2" width="12" height="12"></i> ${t('chat.clearBtn')}
+            <i data-lucide="trash-2" width="12" height="12"></i> ${t('ai.clear')}
           </div>
         </div>
         <div class="chat-panel__token-count" id="chat-token-count">
@@ -97,7 +96,12 @@ export function openChatPanel(empId) {
 }
 
 function renderWelcome(emp) {
-  const greeting = emp.mood >= 70 ? t('chat.welcome.high') : emp.mood >= 40 ? t('chat.welcome.mid') : t('chat.welcome.low');
+  const greetings = {
+    high: t('chat.welcomeHigh'),
+    mid: t('chat.welcomeMid'),
+    low: t('chat.welcomeLow'),
+  };
+  const greeting = emp.mood >= 70 ? greetings.high : emp.mood >= 40 ? greetings.mid : greetings.low;
   return `
     <div class="chat-msg chat-msg--ai">
       <div class="chat-msg__bubble">${greeting}</div>
@@ -129,7 +133,7 @@ function appendMessage(role, text, effects = []) {
   if (effects.length > 0) {
     effectsHtml = '<div class="chat-msg__effects">' +
       effects.map(e => {
-        const label = e.attr === 'mood' ? t('emp.stats.mood') : t('emp.stats.stress');
+        const label = e.attr === 'mood' ? t('chat.mood') : t('chat.stress');
         const sign = e.value > 0 ? '+' : '';
         const cls = (e.attr === 'mood' && e.value > 0) || (e.attr === 'stress' && e.value < 0)
           ? 'chat-msg__effect-tag--positive'
@@ -183,7 +187,7 @@ function finalizeStreamingBubble(cleanText, effects) {
     if (effects.length > 0) {
       const parent = bubble.parentElement;
       const effectsHtml = effects.map(e => {
-        const label = e.attr === 'mood' ? t('emp.stats.mood') : t('emp.stats.stress');
+        const label = e.attr === 'mood' ? t('chat.mood') : t('chat.stress');
         const sign = e.value > 0 ? '+' : '';
         const cls = (e.attr === 'mood' && e.value > 0) || (e.attr === 'stress' && e.value < 0)
           ? 'chat-msg__effect-tag--positive'
@@ -239,7 +243,7 @@ async function handleSend(empId) {
       if (result.effects.length > 0) eventBus.emit('ui:refresh');
     } catch {
       removeTypingIndicator();
-      appendMessage('ai', t('chat.requestFailed'));
+      appendMessage('ai', t('chat.reqFailed'));
     }
   } else {
     // Template mode
@@ -263,13 +267,12 @@ function refreshChatHeader(empId) {
   const metaEl = document.querySelector('.chat-panel__meta');
   if (metaEl) {
     metaEl.innerHTML = `
-      <span>${t(`chat.title.${emp.title}`) || emp.title}</span>
+      <span>${emp.title === 'senior' ? 'Senior' : emp.title === 'medium' ? 'Medium' : 'Junior'}</span>
       <span>·</span>
-      <span>${emp.functions.join('/')}</span>
+      <span>${emp.functions.map(tCat).join('/')}</span>
       <span>·</span>
-      <span>${t('emp.stats.mood')}:${Math.round(emp.mood)}</span>
-      <span>·</span>
-      <span>${t('emp.stats.stress')}:${Math.round(emp.stress)}</span>
+      <span>${t('chat.mood')}:${Math.round(emp.mood)}</span>
+      <span>${t('chat.stress')}:${Math.round(emp.stress)}</span>
     `;
   }
 }
@@ -298,7 +301,7 @@ function bindChatEvents(overlay, empId) {
       const emp = gameEngine.employeeManager.getEmployee(empId);
       container.innerHTML = emp ? renderWelcome(emp) : '';
     }
-    eventBus.emit('toast', { type: 'info', message: t('chat.historyCleared') });
+    eventBus.emit('toast', { type: 'info', message: t('chat.cleared') });
   });
 
   // Settings

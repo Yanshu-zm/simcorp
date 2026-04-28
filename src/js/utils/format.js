@@ -1,4 +1,5 @@
 // ===== Format Utilities =====
+import { t } from './i18n.js';
 
 /** 格式化金额为 $xxx,xxx */
 export function formatMoney(amount) {
@@ -14,12 +15,13 @@ export function formatPercent(value, decimals = 0) {
 
 /** 格式化月份显示 */
 export function formatMonth(month, year) {
-  const lang = localStorage.getItem('game-lang') || 'zh';
-  if (lang === 'en') {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${monthNames[month - 1]} Year ${year}`;
-  }
-  return `第${year}年 ${month}月`;
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${monthNames[month - 1]} Year ${year}`;
+}
+
+/** 格式化月份双语 */
+export function formatMonthCN(month, year) {
+  return t('format.yearMonth', { year, month });
 }
 
 /** 格式化进度百分比 */

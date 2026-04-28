@@ -40,7 +40,6 @@ class GameEngine {
       interactionsThisMonth: {},
       recruitsThisMonth: 0,
       newsLog: [],
-      language: localStorage.getItem('game-lang') || 'zh',
     };
     this.undoStack = [];
   }
@@ -103,9 +102,9 @@ class GameEngine {
     this.projectManager.refreshMarket(this.companyManager.level);
 
     // Add welcome news
-    this.addNews('system', '公司成立', `${companyName} 正式成立！初始资金 $${this.companyManager.funds.toLocaleString()}`);
+    this.addNews('system', { zh: '公司成立', en: 'Company Founded' }, { zh: `${companyName} 正式成立！初始资金 $${this.companyManager.funds.toLocaleString()}`, en: `${companyName} officially founded! Initial funds $${this.companyManager.funds.toLocaleString()}` });
     if (talent) {
-      this.addNews('market', '天赋觉醒', `获得天赋「${talent.name}」: ${talent.desc}`);
+      this.addNews('market', { zh: '天赋觉醒', en: 'Talent Awakened' }, { zh: `获得天赋「${talent.name}」: ${talent.desc}`, en: `Acquired talent '${talent.nameEn || talent.name}': ${talent.descEn || talent.desc}` });
     }
 
     eventBus.emit('game:started', this.gameState);
@@ -197,7 +196,7 @@ class GameEngine {
 
     // Check free recruit months (March=3, September=9)
     if (this.gameState.month === 3 || this.gameState.month === 9) {
-      this.addNews('system', '招募季', '普通招募开放！可免费招募8位候选人。');
+      this.addNews('system', { zh: '招募季', en: 'Recruitment Season' }, { zh: '普通招募开放！可免费招募8位候选人。', en: 'Normal recruitment is open! Can recruit 8 candidates for free.' });
       eventBus.emit('recruit:freeAvailable');
     }
 
@@ -252,11 +251,11 @@ class GameEngine {
         if (result.project.rarity === 'TOP') {
           this.companyManager.topProjectCompleted = true;
         }
-        this.addNews('market', '项目完成', `${result.project.name} 已完成！收入 $${result.reward.toLocaleString()}`);
+        this.addNews('market', { zh: '项目完成', en: 'Project Completed' }, { zh: `${result.project.name} 已完成！收入 $${result.reward.toLocaleString()}`, en: `${result.project.name} completed! Revenue $${result.reward.toLocaleString()}` });
       } else if (result.penalty > 0) {
         settlement.penalties += result.penalty;
         this.companyManager.addFunds(-result.penalty);
-        this.addNews('warning', '超时罚款', `${result.project.name} 超时，罚款 $${result.penalty.toLocaleString()}`);
+        this.addNews('warning', { zh: '超时罚款', en: 'Overtime Penalty' }, { zh: `${result.project.name} 超时，罚款 $${result.penalty.toLocaleString()}`, en: `${result.project.name} overdue, penalty $${result.penalty.toLocaleString()}` });
       }
     }
 
@@ -278,7 +277,7 @@ class GameEngine {
     // 3. Equipment durability
     settlement.brokenEquipment = this.equipmentManager.applyMonthlyDurability();
     for (const item of settlement.brokenEquipment) {
-      this.addNews('warning', '设备故障', `${item.name} 已损坏，需要维修！`);
+      this.addNews('warning', { zh: '设备故障', en: 'Equipment Failure' }, { zh: `${item.name} 已损坏，需要维修！`, en: `${item.name} is broken and needs repair!` });
     }
 
     // Apply equipment effects
@@ -297,7 +296,7 @@ class GameEngine {
     settlement.resignedEmployees = this.employeeManager.checkResignations();
     for (const emp of settlement.resignedEmployees) {
       this.companyManager.addFunds(-emp.salary); // Severance
-      this.addNews('warning', '员工离职', `${emp.firstName} ${emp.lastName} 已离职，支付补偿 $${emp.salary.toLocaleString()}`);
+      this.addNews('warning', { zh: '员工离职', en: 'Employee Resigned' }, { zh: `${emp.firstName} ${emp.lastName} 已离职，支付补偿 $${emp.salary.toLocaleString()}`, en: `${emp.firstName} ${emp.lastName} has resigned. Severance paid: $${emp.salary.toLocaleString()}` });
     }
 
     // 7. Check bankruptcy
