@@ -42,6 +42,8 @@ const translations = {
     'btn.fire': '辞退',
     'btn.chat': '对话',
     'btn.nextMonth': '下一月',
+    'btn.save': '保存设置',
+    'msg.errorLoadingGuide': '无法加载游戏指南',
 
     // Settings
     'settings.title': '系统设置',
@@ -280,6 +282,8 @@ const translations = {
     'btn.fire': 'Fire',
     'btn.chat': 'Chat',
     'btn.nextMonth': 'Next Month',
+    'btn.save': 'Save Settings',
+    'msg.errorLoadingGuide': 'Failed to load guide',
 
     // Settings
     'settings.title': 'Settings',

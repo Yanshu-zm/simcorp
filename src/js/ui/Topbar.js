@@ -1,7 +1,7 @@
 import router from '../router.js';
 import eventBus from '../eventBus.js';
 import gameEngine from '../engine/GameEngine.js';
-import { showModal } from './Modal.js';
+import { showModal, closeModal } from './Modal.js';
 import { t, setLanguage, getCurrentLang } from '../utils/i18n.js';
 
 export function renderTopbar() {
